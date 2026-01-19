@@ -1,5 +1,5 @@
 // src/components/SignUpDialog.tsx
-import React, { useState } from "react";
+import { useState } from "react";
 import { 
   Dialog, 
   DialogTitle, 

@@ -1,4 +1,4 @@
-import React, { Suspense, useLayoutEffect, useRef, useMemo } from "react"; 
+import { Suspense, useLayoutEffect, useRef } from "react"; 
 import { Canvas, useLoader } from "@react-three/fiber"; 
 import { OrbitControls, ContactShadows, Environment, Text, Line } from "@react-three/drei"; 
 import { STLLoader } from "three-stdlib"; 

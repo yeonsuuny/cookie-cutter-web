@@ -1,4 +1,3 @@
-import React from "react";
 import { AppBar, Toolbar, Box, Button } from "@mui/material";
 
 interface HeaderProps {
