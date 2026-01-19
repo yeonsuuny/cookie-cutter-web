@@ -259,6 +259,12 @@ export default function EditorPage({ file, onFileChange }: EditorPageProps) {
                   <Typography variant="body2" color="primary" fontWeight="bold">{minThickness} mm</Typography>
                 </Stack>
                 <Slider value={getSafeNumber(minThickness, 0.6)} min={0.2} max={1.2} step={0.1} onChange={handleSliderChange} sx={{ color: "#ff8fa3" }} />
+                <Box sx={{ bgcolor: "#fff0f3", p: 1.5, borderRadius: 2, mt: 1 }}>
+                  <Typography variant="caption" display="block" sx={{ lineHeight: 1.4, fontSize: "0.85rem"}}>
+                    💡 <strong>출력물 보호 기능</strong><br/>
+                    설정값보다 얇은 선은 자동으로 이 두께로 보정됩니다. 선이 너무 얇아 출력이 끊기거나 부러지는 것을 방지합니다.
+                  </Typography>
+                </Box>
               </Box>
             )}
           </Stack>
