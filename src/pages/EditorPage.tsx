@@ -3,7 +3,7 @@ import {
   Box, Paper, Slider, Button, Typography, Divider, 
   Input, Stack, ToggleButton, ToggleButtonGroup, InputBase, CircularProgress 
 } from "@mui/material";
-import RefreshIcon from '@mui/icons-material/Refresh'; // 아이콘 추가
+import RefreshIcon from '@mui/icons-material/Refresh'; 
 import Viewer3D from "../components/Viewer3D"; 
 
 // === 상단 헬퍼 컴포넌트들 (변경 없음) ===
@@ -46,6 +46,8 @@ export default function EditorPage({ file, onFileChange }: EditorPageProps) {
   // === 상태 관리 ===
   const [stlUrl, setStlUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  // [추가됨] 로딩 문구를 동적으로 변경하기 위한 상태
+  const [loadingText, setLoadingText] = useState("업데이트 중...");
 
   const [type, setType] = useState<string>("both");
   const [size, setSize] = useState<number | string>(90);
@@ -179,14 +181,16 @@ export default function EditorPage({ file, onFileChange }: EditorPageProps) {
   }, [file, type, size, minThickness, bladeThick, bladeDepth, supportThick, supportDepth, baseThick, baseDepth, gap, stampProtrusion, stampDepression, wallOffset, wallExtrude]);
 
 
-  // ⭐ [수정됨] 파일이 '새로' 바뀌었을 때만 자동 실행 (수치 변경 시에는 실행 안 함)
+  // ⭐ 파일이 '새로' 바뀌었을 때만 자동 실행 (초기 로딩 메시지 설정)
   useEffect(() => {
     if (file && prevFileRef.current !== file) {
       prevFileRef.current = file;
-      generateModel(false); // 초기 로딩 (미리보기)
+      // [수정됨] 파일 변경 시에는 긴 로딩 메시지 설정
+      setLoadingText("모델 생성 중입니다...\n약 3분만 기다려주세요!🍪");
+      generateModel(false); 
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [file]); // 다른 수치(size 등)가 바뀌어도 useEffect는 실행되지 않음!
+  }, [file]); 
 
 
   return (
@@ -213,15 +217,19 @@ export default function EditorPage({ file, onFileChange }: EditorPageProps) {
           wallExtrude={getSafeNumber(wallExtrude, 2.0)}
         />
         
+        {/* [수정됨] 로딩 오버레이: zIndex 상향 및 Blur 효과 추가, 메시지 동적화 */}
         {isLoading && (
           <Box sx={{ 
             position: "absolute", top: 0, left: 0, right: 0, bottom: 0, 
             display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-            bgcolor: "rgba(255,255,255,0.7)", zIndex: 20
+            bgcolor: "rgba(255,255,255,0.7)", 
+            backdropFilter: "blur(5px)", // [추가] 블러 효과
+            zIndex: 200 // [수정] Viewer3D의 가이드(zIndex 100)보다 높게 설정하여 덮어씀
           }}>
             <CircularProgress size={60} sx={{ color: "#ff8fa3", mb: 2 }} />
-            <Typography variant="h6" fontWeight="bold" color="text.secondary">
-              업데이트 중...
+            <Typography variant="h6" fontWeight="bold" color="text.secondary" sx={{ whiteSpace: 'pre-line', textAlign: 'center' }}>
+              {/* 동적 메시지 표시 (줄바꿈 지원) */}
+              {loadingText}
             </Typography>
           </Box>
         )}
@@ -321,14 +329,18 @@ export default function EditorPage({ file, onFileChange }: EditorPageProps) {
         )}
 
         <Box sx={{ mt: "auto", pt: 2 }}>
-          {/* ⭐ [추가됨] 설정 적용 및 미리보기 갱신 버튼 */}
+          {/* 설정 적용 버튼 */}
           <Button 
             fullWidth 
             variant="contained" 
             color="primary"
             size="large" 
-            startIcon={<RefreshIcon />} // 아이콘 추가
-            onClick={() => generateModel(false)} // false: 다운로드 안 하고 보기만 함
+            startIcon={<RefreshIcon />}
+            onClick={() => {
+              // [수정됨] 버튼 클릭 시에는 짧은 메시지 설정
+              setLoadingText("변경 사항 적용 중...");
+              generateModel(false);
+            }}
             disabled={isLoading}
             sx={{ 
               bgcolor: "#ff5c8d", py: 1.5, fontWeight: "bold", mb: 2, 
@@ -344,7 +356,7 @@ export default function EditorPage({ file, onFileChange }: EditorPageProps) {
             fullWidth 
             variant="contained" 
             size="large" 
-            onClick={() => generateModel(true)} // true: 다운로드 진행
+            onClick={() => generateModel(true)} 
             disabled={isLoading}
             sx={{ 
               bgcolor: "#213547", py: 1.5, fontWeight: "bold", mb: 2, 
