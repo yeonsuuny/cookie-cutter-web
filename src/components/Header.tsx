@@ -43,7 +43,11 @@ const Header: React.FC<HeaderProps> = ({
         <nav className="nav-menu">
           <ul>
             <li onClick={onUploadClick}>업로드</li>
-            <li className="shop-menu">샵</li>
+
+            <li onClick={() => window.open('https://smartstore.naver.com/3dlight', '_blank')}>
+              샵
+            </li>
+
             <li onClick={onLibraryClick}>보관함</li>
           </ul>
         </nav>
