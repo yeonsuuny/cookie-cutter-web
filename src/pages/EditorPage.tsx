@@ -186,7 +186,7 @@ export default function EditorPage({ file, onFileChange }: EditorPageProps) {
     if (file && prevFileRef.current !== file) {
       prevFileRef.current = file;
       // [수정됨] 파일 변경 시에는 긴 로딩 메시지 설정
-      setLoadingText("모델 생성 중입니다...\n약 3분만 기다려주세요!🍪");
+      setLoadingText("모델 생성 중입니다...\n약 1분만 기다려주세요!🍪");
       generateModel(false); 
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
