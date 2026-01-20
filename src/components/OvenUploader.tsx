@@ -34,6 +34,8 @@ export default function OvenUploader({ onFileSelected }: OvenUploaderProps) {
   const handleDragEnter = () => setIsDragging(true);
   const handleDragLeave = () => setIsDragging(false);
   const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault(); // <-- 이 줄을 추가하면 'e'를 사용하게 되어 에러 해결!
+    e.stopPropagation(); // (선택) 이벤트 버블링 방지
     // 여기서 e.preventDefault()는 상위 컴포넌트나 input이 처리하지만 
     // 시각 효과를 끄기 위해 추가
     setIsDragging(false);

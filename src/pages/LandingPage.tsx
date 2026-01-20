@@ -1,5 +1,3 @@
-// src/pages/LandingPage.tsx
-import React from "react"; 
 import { Box, Container, Typography } from "@mui/material";
 // ⭐️ 새로 만든 컴포넌트 불러오기
 import OvenUploader from "../components/OvenUploader";
