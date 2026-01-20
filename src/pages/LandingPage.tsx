@@ -5,7 +5,6 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
 interface LandingPageProps {
   onStart: (file: File) => void;
-  // ⭐️ [추가] 로그인 체크 함수를 받아옵니다
   onCheckLogin: () => boolean;
 }
 
@@ -13,12 +12,9 @@ export default function LandingPage({ onStart, onCheckLogin }: LandingPageProps)
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
 
-  // ⭐️ [수정] 클릭 시 로그인 여부를 먼저 확인합니다
+  // --- 기존 기능 로직 (유지) ---
   const handleUploadClick = () => {
-    // 로그인이 안 되어 있다면(false), 여기서 멈춤 (App.tsx에서 알림창 띄움)
     if (!onCheckLogin()) return; 
-    
-    // 로그인이 되어 있다면 파일 창 열기
     fileInputRef.current?.click();
   };
 
@@ -37,12 +33,9 @@ export default function LandingPage({ onStart, onCheckLogin }: LandingPageProps)
     setIsDragging(false);
   };
 
-  // ⭐️ [수정] 드래그 앤 드롭 시에도 로그인 체크
   const onDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(false);
-
-    // 드롭했을 때도 로그인이 필요하면 막아야 함
     if (!onCheckLogin()) return;
 
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
@@ -52,7 +45,14 @@ export default function LandingPage({ onStart, onCheckLogin }: LandingPageProps)
   };
 
   return (
-    <Box sx={{ minHeight: "calc(100vh - 72px)", bgcolor: "white", display: "flex", alignItems: "center" }}>
+    // 전체 배경 (나중에 여기에 움직이는 그라데이션을 넣을 예정)
+    <Box sx={{ 
+      minHeight: "calc(100vh - 72px)", // 헤더 높이 뺌
+      display: "flex", 
+      alignItems: "center", 
+      justifyContent: "center",
+      bgcolor: "#FFF9F0" // 아주 연한 쿠키 배경색 (임시)
+    }}>
       <input
         type="file"
         ref={fileInputRef}
@@ -60,50 +60,71 @@ export default function LandingPage({ onStart, onCheckLogin }: LandingPageProps)
         style={{ display: "none" }}
         accept="image/*"
       />
-      <Container maxWidth="lg" sx={{ py: 4 }}>
-        <Box sx={{ display: "flex", flexDirection: { xs: "column", md: "row" }, alignItems: "center", justifyContent: "center", gap: { xs: 6, md: 0 } }}>
+      
+      <Container maxWidth="sm"> {/* 너비를 좀 좁혀서 중앙 집중 */}
+        <Box sx={{ textAlign: "center" }}>
           
-          <Box sx={{ flex: 1, display: "flex", justifyContent: { xs: "center", md: "flex-end" }, pt: { md: 20 }, pr: { md: 2 } }}> 
-            <Box component="img" src="/Pointing.png" alt="안내 캐릭터" sx={{ maxWidth: "100%", height: "auto", maxHeight: { xs: 200, md: 300 }, objectFit: "contain" }} />
-          </Box>
+          {/* 1. 텍스트 영역 */}
+          <Typography variant="h4" fontWeight="bold" gutterBottom sx={{ color: "#5D4037", fontFamily: "'Jua', sans-serif" }}>
+            🍪 나만의 쿠키 커터 만들기
+          </Typography>
+          <Typography variant="body1" sx={{ mb: 4, color: "#8D6E63", fontSize: "1.1rem", fontFamily: "'Jua', sans-serif" }}>
+            이미지를 넣으면 3D 모델로 구워드려요!
+          </Typography>
 
-          <Box sx={{ flex: 1.5, display: "flex", justifyContent: { xs: "center", md: "flex-start" }, width: "100%" }}>
-            <Box sx={{ width: "100%", maxWidth: 600, textAlign: "center" }}>
-              <Typography variant="h4" fontWeight="bold" gutterBottom sx={{ color: "#333" }}>
-                🍪 쿠키 커터 메이커
-              </Typography>
-              <Typography variant="body1" sx={{ mb: 4, color: "#666", fontSize: "1.1rem" }}>
-                이미지 파일을 업로드하면 3D 모델로 변환됩니다
-              </Typography>
+          {/* 2. 업로드 박스 영역 */}
+          <Paper
+            elevation={0}
+            onDragOver={onDragOver}
+            onDragLeave={onDragLeave}
+            onDrop={onDrop}
+            onClick={handleUploadClick}
+            sx={{
+              p: 6, 
+              borderRadius: 6, 
+              transition: "0.3s", 
+              cursor: "pointer",
+              border: isDragging ? "3px dashed #FF7043" : "3px dashed #D7CCC8", // 쿠키색 테두리
+              bgcolor: isDragging ? "#FFF3E0" : "rgba(255, 255, 255, 0.6)", // 평소엔 반투명
+              backdropFilter: "blur(10px)", // 유리 효과
+              transform: isDragging ? "scale(1.02)" : "none",
+              "&:hover": { 
+                borderColor: "#FFAB91", 
+                bgcolor: "#FFF8E1", 
+                transform: "translateY(-5px)" 
+              },
+            }}
+          >
+            <CloudUploadIcon sx={{ fontSize: 72, color: isDragging ? "#FF7043" : "#D7CCC8", mb: 2 }} />
+            
+            <Typography variant="h5" fontWeight="bold" sx={{ color: "#5D4037", mb: 1, fontFamily: "'Jua', sans-serif" }}>
+              {isDragging ? "반죽(파일)을 놓으세요!" : "이미지 업로드"} 
+            </Typography>
+            
+            <Typography variant="body1" color="text.secondary" sx={{ mb: 4, fontFamily: "'Jua', sans-serif" }}>
+              {isDragging ? "바로 3D로 변환됩니다" : "클릭하거나 파일을 드래그하세요"}
+            </Typography>
+            
+            <Button 
+              variant="contained" 
+              size="large" 
+              onClick={(e) => { e.stopPropagation(); handleUploadClick(); }} 
+              sx={{ 
+                borderRadius: 99, 
+                px: 6, 
+                py: 1.5, 
+                fontSize: "1.2rem", 
+                fontWeight: "bold", 
+                bgcolor: "#FF7043", 
+                fontFamily: "'Jua', sans-serif",
+                "&:hover": { bgcolor: "#F4511E" }, 
+                pointerEvents: "none" // 버튼 클릭이 Paper 클릭으로 전달되게
+              }}
+            >
+              Start Now
+            </Button>
+          </Paper>
 
-              {/* 클릭 핸들러는 위에서 수정한 handleUploadClick이 연결되어 있음 */}
-              <Paper
-                elevation={0}
-                onDragOver={onDragOver}
-                onDragLeave={onDragLeave}
-                onDrop={onDrop}
-                onClick={handleUploadClick}
-                sx={{
-                  p: 6, borderRadius: 6, transition: "0.3s", cursor: "pointer",
-                  border: isDragging ? "3px dashed #ff4081" : "3px dashed #FFE6E6",
-                  bgcolor: isDragging ? "#fff0f5" : "#FFF9F9",
-                  transform: isDragging ? "scale(1.02)" : "none",
-                  "&:hover": { borderColor: "#ff8fa3", bgcolor: "#FFF0F0", transform: "translateY(-4px)" },
-                }}
-              >
-                <CloudUploadIcon sx={{ fontSize: 72, color: isDragging ? "#ff4081" : "#ff8fa3", mb: 2 }} />
-                <Typography variant="h5" fontWeight="bold" sx={{ color: "#333", mb: 1 }}>
-                  {isDragging ? "여기에 놓으세요!" : "이미지 업로드"} 
-                </Typography>
-                <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
-                  {isDragging ? "파일을 놓으면 바로 시작됩니다" : "파일을 드래그하거나 클릭하세요"}
-                </Typography>
-                <Button variant="contained" size="large" onClick={(e) => { e.stopPropagation(); handleUploadClick(); }} sx={{ borderRadius: 99, px: 6, py: 1.5, fontSize: "1.2rem", fontWeight: "bold", bgcolor: "#ff8fa3", "&:hover": { bgcolor: "#ff758f" }, pointerEvents: "none" }}>
-                  Start Now
-                </Button>
-              </Paper>
-            </Box>
-          </Box>
         </Box>
       </Container>
     </Box>
