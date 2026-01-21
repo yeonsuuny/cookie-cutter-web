@@ -6,13 +6,19 @@ interface HeaderProps {
   onSignUpClick?: () => void;
   onUploadClick: () => void;
   onLibraryClick: () => void;
+  // ⭐️ interface는 잘 정의되어 있습니다.
+  isLoggedIn: boolean;
+  onLogoutClick: () => void;
 }
 
 const Header: React.FC<HeaderProps> = ({ 
   onLoginClick, 
   onSignUpClick, 
   onUploadClick, 
-  onLibraryClick 
+  onLibraryClick,
+  // ⭐️ [수정 1] 여기서 이 두 친구를 꼭 꺼내와야 합니다!
+  isLoggedIn,
+  onLogoutClick
 }) => {
   const logoChars: string[] = ['3', 'D', 'L', 'I', 'G', 'H', 'T'];
   const bearImageUrl = "/bear_cookie.png";
@@ -20,13 +26,20 @@ const Header: React.FC<HeaderProps> = ({
   return (
     <header className="site-header">
       
-      {/* ⭐️ [수정] 버튼들을 여기로 꺼냈습니다! (상자 밖으로 탈출) */}
+      {/* ⭐️ [수정 2] 로그인 상태(isLoggedIn)에 따라 버튼 다르게 보여주기 */}
       <div className="auth-buttons">
-        {onLoginClick && <button onClick={onLoginClick} className="auth-btn">로그인</button>}
-        {onSignUpClick && <button onClick={onSignUpClick} className="auth-btn signup-btn">가입</button>}
+        {isLoggedIn ? (
+          // ✅ 로그인 상태일 때: 로그아웃 버튼
+          <button onClick={onLogoutClick} className="auth-btn">로그아웃</button>
+        ) : (
+          // ❌ 비로그인 상태일 때: 로그인/가입 버튼
+          <>
+            {onLoginClick && <button onClick={onLoginClick} className="auth-btn">로그인</button>}
+            {onSignUpClick && <button onClick={onSignUpClick} className="auth-btn signup-btn">가입</button>}
+          </>
+        )}
       </div>
 
-      {/* 가운데 정렬 상자 (이제 여기엔 곰돌이랑 메뉴만 남음) */}
       <div className="header-container">
         
         {/* 🐻 곰돌이 로고 영역 */}
