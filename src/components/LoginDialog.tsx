@@ -75,18 +75,68 @@ export default function LoginDialog({ open, onClose, onSwitchToSignUp, onLoginSu
       
       <DialogContent>
         <Stack spacing={3} sx={{ mt: 1 }}>
-          <TextField label="이메일" type="email" fullWidth variant="outlined" value={email} onChange={(e) => {
-            setEmail(e.target.value);
-            if (emailError) setEmailError(false);
-          }} 
-          error={emailError}
-          helperText={emailError ? "올바른 이메일 형식이 아닙니다." : ""}
-          />
-          <TextField label="비밀번호" type="password" fullWidth variant="outlined" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <TextField
+            label="이메일" 
+            type="email" 
+            fullWidth 
+            variant="outlined" 
+            value={email} 
+          
+            // 👇 [추가] 커서가 입력창 밖으로 나갈 때 검사!
+            onBlur={() => {
+              // 내용이 비어있지 않은데 형식이 틀렸으면 에러 띄우기
+              if (email !== "" && !validateEmail(email)) {
+                setEmailError(true);
+              }
+            }}
+
+            onChange={(e) => {
+              setEmail(e.target.value);
+              // 다시 타이핑 시작하면 에러 끄기 (센스 있는 기능)
+              if (emailError) setEmailError(false);
+            }} 
+  
+            error={emailError}
+            helperText={emailError ? "올바른 이메일 형식이 아닙니다." : ""}
+
+            sx={{
+              // 1. 선택했을 때 라벨(글자) 색 변경
+              "& label.Mui-focused": {
+                color: "#8D6E63", 
+              },
+              // 2. 선택했을 때 테두리 색 변경
+              "& .MuiOutlinedInput-root": {
+                "&.Mui-focused fieldset": {
+                  borderColor: "#8D6E63", 
+                }
+              },
+              "& input:-webkit-autofill": {
+                WebkitBoxShadow: "0 0 0 1000px white inset",
+                WebkitTextFillColor: "#000", // 글자색 검정
+              }
+            }}
+            />
+
+          <TextField label="비밀번호" type="password" fullWidth variant="outlined" value={password} onChange={(e) => setPassword(e.target.value)} 
+            sx={{
+              "& label.Mui-focused": {
+                color: "#8D6E63", 
+              },
+              "& .MuiOutlinedInput-root": {
+                "&.Mui-focused fieldset": {
+                  borderColor: "#8D6E63", 
+                }
+              },
+              "& input:-webkit-autofill": {
+                WebkitBoxShadow: "0 0 0 1000px white inset",
+                WebkitTextFillColor: "#000", // 글자색 검정
+              }
+            }}
+            />
           
           <Button 
             variant="contained" size="large" fullWidth onClick={handleLogin}
-            sx={{ fontWeight: "bold", py: 1.5, bgcolor: "#ff8fa3", "&:hover": { bgcolor: "#ff758f" } }}
+            sx={{ fontWeight: "bold", py: 1.5, bgcolor: "#8D6E63", "&:hover": { bgcolor: "#6D4C41" } }}
           >
             로그인하기
           </Button>
