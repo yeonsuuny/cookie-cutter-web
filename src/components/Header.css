@@ -1,18 +1,38 @@
+/* src/components/Header.css */
+
 /* 폰트 불러오기 */
 @import url('https://fonts.googleapis.com/css2?family=Jua&display=swap');
 
+/* =========================================
+   1. 기본 레이아웃 (공통)
+========================================= */
+
 /* 헤더 전체 (부모) */
 .site-header {
-  /* 🚨 [핵심] 이 줄이 없으면 버튼 위치 조절이 절대 안 됩니다! */
   position: relative; 
-  
   background-color: #FFF9F0; 
   font-family: 'Jua', sans-serif;
-  /* 버튼이 들어갈 공간 확보를 위해 위쪽 여백을 좀 줍니다 */
   padding: 30px 0 20px 0; 
+  
+  /* 부드러운 변환 효과 (모든 자식 요소 포함) */
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
-/* --- ⭐️ 로그인/회원가입 버튼 (오른쪽 구석 고정) --- */
+/* 중앙 정렬 컨테이너 (기본: 세로 배치) */
+.header-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column; /* 기본은 위아래 배치 (로고 위, 메뉴 아래) */
+  align-items: center;
+  gap: 40px; 
+  transition: all 0.4s ease;
+}
+
+/* =========================================
+   2. 로그인/회원가입 버튼 (우측 상단)
+========================================= */
 .auth-buttons {
   position: absolute;
   right: 40px; 
@@ -20,76 +40,51 @@
   display: flex;
   gap: 15px; 
   z-index: 100;
-  
-  /* ⭐️ [중요] 로그인 글씨와 회원가입 버튼의 높이 중심을 맞춰줍니다 */
   align-items: center; 
+  transition: all 0.4s ease;
 }
 
-/* 로그인/회원가입 버튼 디자인 */
 .auth-btn {
   background: none;
   border: none;
   font-family: 'Jua', sans-serif;
-  font-size: 1.2rem; /* 글씨 크기 살짝 조정 */
+  font-size: 1.2rem;
   color: #8D6E63;     
   cursor: pointer;
   padding: 5px;
-  transition: all 0.2s;
-  
-  /* 텍스트 줄바꿈 방지 */
   white-space: nowrap;
+  transition: all 0.2s;
 }
 
-/* 호버 효과 */
-.auth-btn:hover {
-  color: #FF7043;
-  transform: scale(1.05);
-}
-
-/* 👇 [추가] 회원가입 버튼 전용 스타일 (주황색 강조) */
 .signup-btn {
-  background-color: #FF7043; /* 원래 주황색 */
-  color: #FFF9F0;            /* 원래 글자색 (아이보리/흰색) */
-  
+  background-color: #FF7043;
+  color: #FFF9F0;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 8px 24px;
   border-radius: 30px;
-  transition: transform 0.2s ease; /* 부드럽게 커지게 하기 위한 필수 코드 */
 }
 
-/* 마우스 올렸을 때(Hover) 색상도 살짝 변경해두면 더 자연스럽습니다 */
-.signup-btn:hover {
-  background-color: #FF7043; 
-  color: #FFF9F0 !important;
-  
-  /* 크기만 살짝 키움 (1.05배) */
+.auth-btn:hover, .signup-btn:hover {
   transform: scale(1.05);
-}
-
-.auth-btn:hover {
   color: #FF7043;
-  transform: scale(1.05);
+}
+.signup-btn:hover {
+  color: #FFF9F0 !important;
 }
 
-/* --- 중앙 정렬 컨테이너 --- */
-.header-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 40px; 
-}
 
-/* --- 🐻 곰돌이 로고 스타일 --- */
+/* =========================================
+   3. 홈 화면용 로고 (곰돌이 7마리)
+========================================= */
 .logo-area {
   display: flex;
   gap: 35px; 
   cursor: pointer;
   margin-top: 10px; 
+  align-items: center;
+  transition: all 0.4s ease;
 }
 
 .bear-wrapper {
@@ -106,7 +101,7 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
-  filter: drop-shadow(2px 3px 3px rgba(0,0,0,0.2));
+  filter: drop-shadow(0 4px 3px rgba(0,0,0,0.3)) drop-shadow(0 8px 10px rgba(0,0,0,0.15));
 }
 
 .bear-text {
@@ -115,12 +110,9 @@
   color: #5D4037;
   font-weight: bold;
   z-index: 10;
-  
-  /* 뱃지 스타일 */
   bottom: -10px;
   left: 50%;
   transform: translateX(-50%);
-  
   background-color: #FFECB3;
   width: 40px;
   height: 40px;
@@ -128,19 +120,19 @@
   justify-content: center;
   align-items: center;
   border-radius: 50%;
-  border: 3px solid #F5E6D3;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  border: 3px solid #E6D0B3;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.2),
+  inset 2px 2px 5px rgba(255, 255, 255, 0.8),
+  inset -2px -2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.bear-wrapper:hover {
-  transform: translateY(-12px) scale(1.1);
-}
+.bear-wrapper:hover { transform: translateY(-12px) scale(1.1); }
+.bear-wrapper:nth-child(even):hover { transform: translateY(-12px) scale(1.1) rotate(5deg); }
 
-.bear-wrapper:nth-child(even):hover {
-  transform: translateY(-12px) scale(1.1) rotate(5deg);
-}
 
-/* --- 메뉴 스타일 --- */
+/* =========================================
+   4. 네비게이션 메뉴 (공통)
+========================================= */
 .nav-menu ul {
   display: flex;
   gap: 70px;
@@ -148,6 +140,7 @@
   margin: 0;
   padding: 0;
   align-items: center;
+  transition: all 0.4s ease;
 }
 
 .nav-menu li {
@@ -160,4 +153,85 @@
 .nav-menu li:hover {
   color: #FF7043;
   transform: translateY(-2px);
+}
+
+
+/* =========================================================
+   ⭐️ 5. 슬림 모드 (EditorPage용) - 박스 로고 & 가로 배치
+   ========================================================= */
+
+/* (1) 헤더 전체 스타일 변경 */
+.site-header.compact {
+    /* 👇 위아래 여백을 10px -> 4px로 확 줄입니다! */
+    padding: 8px 0; 
+    
+    background-color: rgba(255, 249, 240, 0.98);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    
+    /* (선택) 헤더 높이가 70px를 넘지 않게 강제하고 싶다면 주석 해제 */
+    /* height: 70px; */
+    /* box-sizing: border-box; */
+}
+
+/* (2) 컨테이너를 가로(Row) 배치로 변경 */
+.site-header.compact .header-container {
+    flex-direction: row;        /* ⭐️ 가로 한 줄 정렬 */
+    justify-content: flex-start; /* 왼쪽부터 차례대로 */
+    align-items: center;        /* 수직 중앙 */
+    max-width: 100%;            /* 화면 전체 너비 */
+    padding: 0 40px;            /* 좌우 여백 */
+}
+
+/* (3) 로고 영역 수정 (박스 로고) */
+.site-header.compact .logo-area {
+    margin-top: 0;
+    margin-right: 60px; /* ⭐️ 로고와 메뉴 사이 간격 */
+    gap: 0;
+}
+
+/* ⭐️ 새로 추가된 박스 로고 스타일 */
+.box-logo {
+    /* 👇 로고를 60px~65px 정도로 시원하게 키움 */
+    height: 47px; 
+    width: auto;
+    
+    /* 그림자 및 효과 */
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+    transition: transform 0.2s;
+    
+    /* 이미지가 위아래로 꽉 차 보이게 설정 */
+    display: block; 
+}
+
+.box-logo:hover {
+    transform: scale(1.05);
+}
+
+/* (4) 메뉴바 스타일 수정 */
+.site-header.compact .nav-menu {
+    flex-grow: 1; /* 남은 공간 차지 */
+}
+
+.site-header.compact .nav-menu ul {
+    gap: 40px; /* 메뉴 글씨 간격 좁힘 (70px -> 40px) */
+    justify-content: flex-start;
+}
+
+.site-header.compact .nav-menu li {
+    font-size: 1.1rem; /* 글씨 크기 줄임 (1.4rem -> 1.1rem) */
+}
+
+/* (5) 로그인 버튼 위치 수직 중앙 정렬 */
+.site-header.compact .auth-buttons {
+    top: 50%;                 /* 헤더 높이의 50% 지점 */
+    transform: translateY(-50%); /* 정확히 중앙으로 이동 */
+    right: 40px;              
+}
+
+.site-header.compact .auth-btn {
+    font-size: 0.95rem; /* 버튼 글씨도 살짝 작게 */
+}
+.site-header.compact .signup-btn {
+    padding: 6px 18px;
 }

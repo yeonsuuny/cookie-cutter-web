@@ -1,20 +1,17 @@
+// src/pages/LandingPage.tsx
 import { Box, Container, Typography } from "@mui/material";
-// ⭐️ 새로 만든 컴포넌트 불러오기
 import OvenUploader from "../components/OvenUploader";
 
 interface LandingPageProps {
   onStart: (file: File) => void;
-  onCheckLogin: () => boolean;
+  // onCheckLogin 제거 (App에서 처리함)
 }
 
-export default function LandingPage({ onStart, onCheckLogin }: LandingPageProps) {
+export default function LandingPage({ onStart }: LandingPageProps) {
 
-  // ⭐️ 오븐에서 파일이 선택되었을 때 실행될 함수
   const handleOvenFileSelect = (file: File) => {
-    // 1. 로그인 체크
-    if (!onCheckLogin()) return; 
-    
-    // 2. 통과하면 앱 시작
+    // ⭐️ 로그인 체크 로직 삭제!
+    // 그냥 무조건 부모(App)에게 파일을 전달합니다.
     onStart(file);
   };
 
@@ -37,7 +34,6 @@ export default function LandingPage({ onStart, onCheckLogin }: LandingPageProps)
             오븐에 이미지를 넣으면 3D 모델로 구워드려요!
           </Typography>
 
-          {/* ⭐️ 기존 Paper 코드를 다 지우고 이거 한 줄이면 끝! */}
           <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
              <OvenUploader onFileSelected={handleOvenFileSelect} />
           </Box>

@@ -208,7 +208,7 @@ export default function Viewer3D(props: Viewer3DProps) {
         lineHeight: "1.6",
         userSelect: "none"
       }}>
-        <div style={{ fontWeight: "bold", marginBottom: "4px", color: "#333" }}>🖱️ 3D 뷰어 조작</div>
+        <div style={{ fontWeight: "bold", marginBottom: "4px", color: "#333" }}> 3D 뷰어 조작</div>
         <div>• <b>좌클릭</b> : 회전</div>
         <div>• <b>우클릭</b> : 화면 이동</div>
         <div>• <b>휠</b> 스크롤 : 확대/축소</div>

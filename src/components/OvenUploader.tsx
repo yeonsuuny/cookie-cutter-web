@@ -1,3 +1,4 @@
+// src/components/OvenUploader.tsx
 import React, { useState } from 'react';
 import './OvenUploader.css';
 
@@ -9,7 +10,6 @@ export default function OvenUploader({ onFileSelected }: OvenUploaderProps) {
   const [preview, setPreview] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
 
-  // 오븐 이미지 경로
   const OVEN_IMG_URL = "/oven.png"; 
 
   const handleFile = (file: File) => {
@@ -23,7 +23,11 @@ export default function OvenUploader({ onFileSelected }: OvenUploaderProps) {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) handleFile(file);
+    if (file) {
+      handleFile(file);
+    }
+    // ⭐️ [중요] 같은 파일 다시 선택해도 동작하게 초기화
+    e.target.value = ""; 
   };
 
   const handleDragEnter = () => setIsDragging(true);
@@ -45,7 +49,6 @@ export default function OvenUploader({ onFileSelected }: OvenUploaderProps) {
       onDrop={handleDrop}
     >
       <div className="smoke-container">
-        {/* 연기 효과 (그대로 유지) */}
         <span className="smoke s-1"></span>
         <span className="smoke s-2"></span>
         <span className="smoke s-3"></span>
@@ -57,7 +60,6 @@ export default function OvenUploader({ onFileSelected }: OvenUploaderProps) {
         <span className="smoke s-9"></span>
       </div>
 
-      {/* 1층: 미리보기 영역 (여기를 수정했습니다!) */}
       <div className="oven-preview-area">
         {preview ? (
           <img src={preview} alt="preview" className="preview-img" />
@@ -69,10 +71,8 @@ export default function OvenUploader({ onFileSelected }: OvenUploaderProps) {
         )}
       </div>
 
-      {/* 2층: 오븐 껍데기 */}
       <img src={OVEN_IMG_URL} alt="Oven" className="oven-frame-img" />
 
-      {/* 3층: 투명 버튼 */}
       <input 
         type="file" 
         accept="image/*" 
