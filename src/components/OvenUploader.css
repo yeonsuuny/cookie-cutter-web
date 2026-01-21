@@ -11,8 +11,15 @@
   overflow: visible !important; 
 }
 
-.oven-wrapper:hover {
+.oven-wrapper:hover 
+.oven-wrapper.dragging {
   transform: scale(1.02);
+}
+
+.oven-wrapper:hover .oven-frame-img,
+.oven-wrapper.dragging .oven-frame-img {
+  filter: drop-shadow(0 0 10px #FF7043);
+  transition: filter 0.3s ease;
 }
 
 /* --- ☁️ 연기 구현 (무조건 보임) --- */
@@ -131,7 +138,6 @@
 
 .oven-wrapper.dragging {
   transform: scale(1.05);
-  filter: drop-shadow(0 0 10px #FF7043);
 }
 
 /* 👇 [추가] 오븐 내부 안내 문구 디자인 */

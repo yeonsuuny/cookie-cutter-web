@@ -48,24 +48,23 @@
 
 /* 👇 [추가] 회원가입 버튼 전용 스타일 (주황색 강조) */
 .signup-btn {
-  /* 🎨 기존 rgba 코드는 지우고, 이 색상 코드로 교체하세요! */
-  background-color: #FFB44B;
+  background-color: #FF7043; /* 원래 주황색 */
+  color: #FFF9F0;            /* 원래 글자색 (아이보리/흰색) */
   
-  /* 글자색 (진한 갈색 유지 - 이 색상이 배경이랑 잘 어울립니다) */
-  color: #5D4037; 
-  
-  /* 정렬 및 모양 (그대로 유지) */
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 8px 24px;
   border-radius: 30px;
-  font-weight: bold;
+  transition: transform 0.2s ease; /* 부드럽게 커지게 하기 위한 필수 코드 */
 }
 
 /* 마우스 올렸을 때(Hover) 색상도 살짝 변경해두면 더 자연스럽습니다 */
 .signup-btn:hover {
-  background-color: #FFA000; /* 기존 색보다 조금 더 진한 색 (예시) */
+  background-color: #FF7043; 
+  color: #FFF9F0 !important;
+  
+  /* 크기만 살짝 키움 (1.05배) */
   transform: scale(1.05);
 }
 
