@@ -23,7 +23,7 @@ const Header: React.FC<HeaderProps> = ({
       {/* ⭐️ [수정] 버튼들을 여기로 꺼냈습니다! (상자 밖으로 탈출) */}
       <div className="auth-buttons">
         {onLoginClick && <button onClick={onLoginClick} className="auth-btn">로그인</button>}
-        {onSignUpClick && <button onClick={onSignUpClick} className="auth-btn">회원가입</button>}
+        {onSignUpClick && <button onClick={onSignUpClick} className="auth-btn signup-btn">가입</button>}
       </div>
 
       {/* 가운데 정렬 상자 (이제 여기엔 곰돌이랑 메뉴만 남음) */}

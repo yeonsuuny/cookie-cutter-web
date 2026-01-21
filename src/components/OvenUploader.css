@@ -1,30 +1,98 @@
 /* 오븐 전체를 감싸는 통 */
 .oven-wrapper {
-  position: relative; /* 겹치기 기준점 */
-  width: 500px;      /* 오븐 이미지 크기에 맞춰 조절 */
-  height: 500px;     /* 오븐 이미지 크기에 맞춰 조절 */
+  position: relative;
+  width: 500px;
+  height: 500px;
   margin: 0 auto;
   cursor: pointer;
   transition: transform 0.2s ease;
+  
+  /* ⭐️ [중요] 연기가 오븐 밖으로 삐져나가도 보이게 설정 */
+  overflow: visible !important; 
 }
 
 .oven-wrapper:hover {
-  transform: scale(1.02); /* 마우스 올리면 살짝 커짐 */
+  transform: scale(1.02);
 }
 
-/* 1층: 업로드된 이미지 미리보기 (맨 뒤) */
+/* --- ☁️ 연기 구현 (무조건 보임) --- */
+.smoke-container {
+  position: absolute;
+  top: -110px;
+  left: 46%;
+  transform: translateX(-50%);
+  width: 300px;
+  height: 200px;
+  z-index: 999;
+  pointer-events: none;
+}
+
+.smoke {
+  position: absolute;
+  bottom: 0;
+  
+  /* ⭐️ [핵심] 가로가 더 긴 타원형 만들기 */
+  width: 36px;
+  height: 22px; 
+  
+  /* 다시 색깔로 돌아오기 (이미지 제거) */
+  background-image: none;
+  background-color: #E0E0E0; /* 은은한 회색 (흰색을 원하면 #fff) */
+  
+  /* 그냥 50%를 주면 가로세로 비율 때문에 자동으로 타원이 됩니다 */
+  border-radius: 50%;
+  
+  opacity: 0;
+  /* 흐림 효과를 살짝 줘서 부드럽게 */
+  filter: blur(6px); 
+  
+  animation: smokeRise 3.5s infinite ease-out;
+}
+
+/* --- 연기 위치 (그대로 유지) --- */
+.smoke.s-1 { left: 20%; animation-delay: 0.5s; }
+.smoke.s-2 { left: 30%; animation-delay: 2.5s; }
+.smoke.s-3 { left: 45%; animation-delay: 0.0s; }
+.smoke.s-4 { left: 50%; animation-delay: 1.5s; }
+.smoke.s-5 { left: 55%; animation-delay: 3.0s; }
+.smoke.s-6 { left: 70%; animation-delay: 1.0s; }
+.smoke.s-7 { left: 80%; animation-delay: 3.5s; }
+.smoke.s-8 { left: 48%; animation-delay: 0.8s; }
+.smoke.s-9 { left: 52%; animation-delay: 2.3s; }
+
+
+/* --- ☁️ 애니메이션 (빙글빙글 돌면서 올라가기) --- */
+@keyframes smokeRise {
+  0% {
+    /* 납작하게 시작 */
+    transform: translateY(0) scale(0.5) rotate(0deg);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.8;
+  }
+  100% {
+    /* ⭐️ 올라가면서 180도 회전 -> 타원형이라 돌아가는 게 잘 보임! */
+    transform: translateY(-150px) scale(3) rotate(180deg);
+    opacity: 0;
+  }
+}
+/* --- ☁️ 연기 끝 --- */
+
+
+/* --- 기존 스타일 유지 --- */
 .oven-preview-area {
   position: absolute;
-  top: 50%;         /* 오븐 중앙 정렬 */
+  top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 60%;       /* 오븐 문 안쪽 크기에 맞춰 조절하세요 */
-  height: 60%;      /* 오븐 문 안쪽 크기에 맞춰 조절하세요 */
-  z-index: 1;       /* 레이어 1 */
+  width: 60%;
+  height: 60%;
+  z-index: 1;
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: hidden; /* 튀어나온 이미지 자르기 */
+  overflow: hidden;
 }
 
 .preview-img {
@@ -40,31 +108,68 @@
   text-align: center;
 }
 
-/* 2층: 오븐 그림 (중간, 문 안쪽이 투명해야 함) */
 .oven-frame-img {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 2;        /* 레이어 2 */
-  pointer-events: none; /* 클릭 투과 */
+  z-index: 2;
+  pointer-events: none;
 }
 
-/* 3층: 투명한 파일 입력창 (맨 위, 실제 기능) */
 .hidden-file-input {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  opacity: 0;       /* 눈에 안 보이게 */
-  z-index: 10;      /* 제일 위 */
+  opacity: 0;
+  z-index: 10;
   cursor: pointer;
 }
 
-/* 드래그 중일 때 효과 (선택사항) */
 .oven-wrapper.dragging {
   transform: scale(1.05);
   filter: drop-shadow(0 0 10px #FF7043);
+}
+
+/* 👇 [추가] 오븐 내부 안내 문구 디자인 */
+.upload-guide {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 15px; /* 버튼과 설명글 사이 간격 */
+  width: 100%;
+}
+
+.guide-button {
+  background-color: #FF7043; /* 주황색 배경 */
+  color: white;              /* 글자색 흰색 */
+  
+  font-family: 'Jua', sans-serif;
+  font-size: 1.2rem;         /* 오븐에 맞게 적당한 크기 */
+  
+  /* 둥근 타원형 만들기 */
+  padding: 6px 18px;         
+  border-radius: 20px;       
+  
+  /* 그림자 살짝 줘서 입체감 */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* 설명: "파일을 드래그하거나..." */
+.guide-desc {
+  font-family: 'Jua', sans-serif;
+  font-size: 1.1rem;        /* 작게 */
+  color: #8D6E63;
+  margin: 0;
+  white-space: nowrap;       /* 줄바꿈 방지 */
+}
+
+@keyframes floatIcon {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+  100% { transform: translateY(0px); }
 }

@@ -14,16 +14,15 @@
 
 /* --- ⭐️ 로그인/회원가입 버튼 (오른쪽 구석 고정) --- */
 .auth-buttons {
-  position: absolute; /* 둥둥 띄우기 */
-  
-  /* 오른쪽 벽에서 20px, 위쪽 벽에서 20px 떨어짐 */
+  position: absolute;
   right: 40px; 
   top: 40px;   
-  left: auto; /* 혹시 모를 왼쪽 기준 제거 */
-  
   display: flex;
-  gap: 15px; /* 버튼 사이 간격 */
-  z-index: 100; /* 맨 앞으로 가져오기 */
+  gap: 15px; 
+  z-index: 100;
+  
+  /* ⭐️ [중요] 로그인 글씨와 회원가입 버튼의 높이 중심을 맞춰줍니다 */
+  align-items: center; 
 }
 
 /* 로그인/회원가입 버튼 디자인 */
@@ -31,11 +30,43 @@
   background: none;
   border: none;
   font-family: 'Jua', sans-serif;
-  font-size: 1.2rem;
+  font-size: 1.2rem; /* 글씨 크기 살짝 조정 */
   color: #8D6E63;     
   cursor: pointer;
   padding: 5px;
   transition: all 0.2s;
+  
+  /* 텍스트 줄바꿈 방지 */
+  white-space: nowrap;
+}
+
+/* 호버 효과 */
+.auth-btn:hover {
+  color: #FF7043;
+  transform: scale(1.05);
+}
+
+/* 👇 [추가] 회원가입 버튼 전용 스타일 (주황색 강조) */
+.signup-btn {
+  /* 🎨 기존 rgba 코드는 지우고, 이 색상 코드로 교체하세요! */
+  background-color: #FFB44B;
+  
+  /* 글자색 (진한 갈색 유지 - 이 색상이 배경이랑 잘 어울립니다) */
+  color: #5D4037; 
+  
+  /* 정렬 및 모양 (그대로 유지) */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 24px;
+  border-radius: 30px;
+  font-weight: bold;
+}
+
+/* 마우스 올렸을 때(Hover) 색상도 살짝 변경해두면 더 자연스럽습니다 */
+.signup-btn:hover {
+  background-color: #FFA000; /* 기존 색보다 조금 더 진한 색 (예시) */
+  transform: scale(1.05);
 }
 
 .auth-btn:hover {
@@ -57,15 +88,15 @@
 /* --- 🐻 곰돌이 로고 스타일 --- */
 .logo-area {
   display: flex;
-  gap: 20px; 
+  gap: 35px; 
   cursor: pointer;
   margin-top: 10px; 
 }
 
 .bear-wrapper {
   position: relative;
-  width: 90px;
-  height: 90px;
+  width: 75px;
+  height: 75px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -121,7 +152,7 @@
 }
 
 .nav-menu li {
-  font-size: 1.6rem;
+  font-size: 1.4rem;
   color: #5D4037;
   cursor: pointer;
   transition: all 0.2s ease;

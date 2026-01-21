@@ -2,26 +2,22 @@ import React, { useState } from 'react';
 import './OvenUploader.css';
 
 interface OvenUploaderProps {
-  onFileSelected: (file: File) => void; // 부모에게 파일을 전달하는 함수
+  onFileSelected: (file: File) => void; 
 }
 
 export default function OvenUploader({ onFileSelected }: OvenUploaderProps) {
   const [preview, setPreview] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
 
-  // 오븐 이미지 경로 (public 폴더에 넣어주세요!)
+  // 오븐 이미지 경로
   const OVEN_IMG_URL = "/oven.png"; 
 
-  // 파일 처리 함수
   const handleFile = (file: File) => {
-    // 1. 미리보기 생성
     const reader = new FileReader();
     reader.onloadend = () => {
       setPreview(reader.result as string);
     };
     reader.readAsDataURL(file);
-
-    // 2. 부모(LandingPage)에게 파일 전달
     onFileSelected(file);
   };
 
@@ -30,15 +26,15 @@ export default function OvenUploader({ onFileSelected }: OvenUploaderProps) {
     if (file) handleFile(file);
   };
 
-  // 드래그 앤 드롭 시각 효과 관리
   const handleDragEnter = () => setIsDragging(true);
   const handleDragLeave = () => setIsDragging(false);
   const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault(); // <-- 이 줄을 추가하면 'e'를 사용하게 되어 에러 해결!
-    e.stopPropagation(); // (선택) 이벤트 버블링 방지
-    // 여기서 e.preventDefault()는 상위 컴포넌트나 input이 처리하지만 
-    // 시각 효과를 끄기 위해 추가
+    e.preventDefault();
+    e.stopPropagation();
     setIsDragging(false);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleFile(e.dataTransfer.files[0]);
+    }
   };
 
   return (
@@ -48,21 +44,35 @@ export default function OvenUploader({ onFileSelected }: OvenUploaderProps) {
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
-      {/* 1층: 미리보기 (오븐 속) */}
+      <div className="smoke-container">
+        {/* 연기 효과 (그대로 유지) */}
+        <span className="smoke s-1"></span>
+        <span className="smoke s-2"></span>
+        <span className="smoke s-3"></span>
+        <span className="smoke s-4"></span>
+        <span className="smoke s-5"></span>
+        <span className="smoke s-6"></span>
+        <span className="smoke s-7"></span>
+        <span className="smoke s-8"></span>
+        <span className="smoke s-9"></span>
+      </div>
+
+      {/* 1층: 미리보기 영역 (여기를 수정했습니다!) */}
       <div className="oven-preview-area">
         {preview ? (
           <img src={preview} alt="preview" className="preview-img" />
         ) : (
-          <p className="placeholder-msg">
-            {isDragging ? "놓으세요!" : "이미지를 쏙 넣어주세요!"}
-          </p>
+          <div className="upload-guide">
+            <span className="guide-button">이미지 업로드</span>
+            <p className="guide-desc">파일을 드래그하거나 클릭하세요</p>
+          </div>
         )}
       </div>
 
       {/* 2층: 오븐 껍데기 */}
       <img src={OVEN_IMG_URL} alt="Oven" className="oven-frame-img" />
 
-      {/* 3층: 투명한 기능 버튼 */}
+      {/* 3층: 투명 버튼 */}
       <input 
         type="file" 
         accept="image/*" 
