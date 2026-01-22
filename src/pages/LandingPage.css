@@ -1,0 +1,109 @@
+/* src/pages/LandingPage.css */
+
+/* 전체 페이지 래퍼 */
+.landing-page-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden; /* 스크롤 방지 */
+  background-color: #FFF9F0; /* 이미지가 로딩되기 전 배경색 */
+}
+
+/* 1. 베이커리 배경 이미지 */
+.bakery-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/bakery_bg.png'); /* ⭐️ 준비한 배경 이미지 경로 */
+  background-size: cover;       /* 화면 꽉 채우기 */
+  background-position: center bottom; /* 바닥(카운터) 기준 정렬 */
+  z-index: 0;
+}
+
+/* 컨텐츠 컨테이너 (오븐 위치 잡기) */
+.content-container {
+  position: relative;
+  z-index: 10; /* 배경보다 위에 있어야 함 */
+  height: 100%;
+  display: flex !important;
+  align-items: center; /* 세로 중앙 정렬 */
+  justify-content: center;
+  padding-top: 100px; /* 헤더 공간만큼 띄우기 */
+}
+
+/* 오븐 래퍼 (필요시 위치 미세조정) */
+.oven-wrapper {
+  position: relative;
+  z-index: 20;
+}
+
+/* =========================================
+   ✨ 연기 애니메이션 (Smoke)
+========================================= */
+.smoke-container {
+  position: absolute;
+  top: -60px; /* 오븐 위쪽 */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 100px;
+  z-index: 15; /* 오븐 뒤, 배경 앞 */
+  pointer-events: none; /* 클릭 방해 안 하게 설정 */
+}
+
+.smoke {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  background-color: rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+  bottom: 0;
+  left: 30px;
+  opacity: 0;
+}
+
+/* 연기 3개가 시간차로 올라감 */
+.smoke-1 { animation: smoke-rise 3s infinite 0s; }
+.smoke-2 { animation: smoke-rise 3s infinite 1s; }
+.smoke-3 { animation: smoke-rise 3s infinite 2s; }
+
+@keyframes smoke-rise {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateY(-80px) scale(2); /* 위로 올라가면서 커짐 */
+    opacity: 0;
+  }
+}
+
+/* =========================================
+   🍪 빼꼼 쿠키 애니메이션 (Peeking Cookie)
+========================================= */
+.peeking-cookie {
+  position: absolute;
+  bottom: -10px; /* 화면 맨 아래 */
+  left: 5%;      /* 왼쪽 구석 */
+  width: 120px;
+  z-index: 5;    /* 배경 바로 위 */
+  animation: peek-a-boo 5s infinite ease-in-out;
+}
+
+.peeking-cookie img {
+  width: 100%;
+  transform: rotate(-10deg); /* 살짝 기울이기 */
+}
+
+@keyframes peek-a-boo {
+  0%, 100% { transform: translateY(100%); } /* 숨어있음 */
+  30% { transform: translateY(100%); }      /* 대기 */
+  40% { transform: translateY(20%); }       /* 빼꼼 올라옴 */
+  60% { transform: translateY(20%); }       /* 눈치 봄 */
+  70% { transform: translateY(100%); }      /* 다시 숨음 */
+}
