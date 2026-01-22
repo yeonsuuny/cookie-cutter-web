@@ -23,7 +23,7 @@ const Header: React.FC<HeaderProps> = ({
   
   // ✅ 2. 에디터 화면용: 박스 로고 이미지
   // (아직 이미지가 없다면 임시로 텍스트나 다른 이미지를 넣어도 됩니다)
-  const boxLogoUrl = "/logo-box.png"; 
+  const boxLogoUrl = "/Group 5.svg"; 
 
   return (
     <header className={`site-header ${isCompact ? 'compact' : ''}`}>

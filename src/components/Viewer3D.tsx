@@ -132,7 +132,7 @@ function STLModel({ url }: { url: string }) {
 
   return (
     <mesh ref={meshRef} geometry={geometry} rotation={[-Math.PI / 2, 0, 0]} castShadow receiveShadow>
-      <meshStandardMaterial color="#ff5c8d" roughness={0.4} metalness={0.1} />
+      <meshStandardMaterial color="#4D3C20" roughness={0.4} metalness={0.1} />
     </mesh>
   );
 }

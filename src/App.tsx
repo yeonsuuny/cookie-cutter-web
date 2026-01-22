@@ -125,7 +125,7 @@ export default function App() {
         onLibraryClick={handleLibraryClick}
         isLoggedIn={isLoggedIn}
         onLogoutClick={handleLogout}
-        isCompact={currentPage == "editor"}
+        isCompact={currentPage == "editor" || currentPage === "library"}
       />
 
       <LoginDialog 

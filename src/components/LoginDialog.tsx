@@ -102,7 +102,7 @@ export default function LoginDialog({
             variant="contained" size="large" fullWidth onClick={handleLogin}
             sx={{ fontWeight: "bold", py: 1.5, bgcolor: "#8D6E63", "&:hover": { bgcolor: "#6D4C41" } }}
           >
-            로그인하기
+            로그인
           </Button>
 
           <Typography variant="body2" align="center" color="text.secondary" sx={{ cursor: "pointer", textDecoration: "underline" }}

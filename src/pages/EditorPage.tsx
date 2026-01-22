@@ -266,8 +266,8 @@ export default function EditorPage({ file, onFileChange }: EditorPageProps) {
                   <Typography gutterBottom fontWeight={600} fontSize="0.9rem">최소 선 두께 (mm)</Typography>
                   <Typography variant="body2" color="primary" fontWeight="bold">{minThickness} mm</Typography>
                 </Stack>
-                <Slider value={getSafeNumber(minThickness, 0.6)} min={0.2} max={1.2} step={0.1} onChange={handleSliderChange} sx={{ color: "#ff8fa3" }} />
-                <Box sx={{ bgcolor: "#fff0f3", p: 1.5, borderRadius: 2, mt: 1 }}>
+                <Slider value={getSafeNumber(minThickness, 0.6)} min={0.2} max={1.2} step={0.1} onChange={handleSliderChange} sx={{ color: "#5D4037" }} />
+                <Box sx={{ bgcolor: "#EFEBE9", p: 1.5, borderRadius: 2, mt: 1 }}>
                   <Typography variant="caption" display="block" sx={{ lineHeight: 1.4, fontSize: "0.85rem"}}>
                     💡 <strong>출력물 보호 기능</strong><br/>
                     설정값보다 얇은 선은 자동으로 이 두께로 보정됩니다. 선이 너무 얇아 출력이 끊기거나 부러지는 것을 방지합니다.
@@ -343,9 +343,9 @@ export default function EditorPage({ file, onFileChange }: EditorPageProps) {
             }}
             disabled={isLoading}
             sx={{ 
-              bgcolor: "#ff5c8d", py: 1.5, fontWeight: "bold", mb: 2, 
-              "&:hover": { bgcolor: "#e04f7a" },
-              "&.Mui-disabled": { bgcolor: "#ffb2c9", color: "#fff" } 
+              bgcolor: "#FF6F00", py: 1.5, fontWeight: "bold", mb: 2, 
+              "&:hover": { bgcolor: "#E65100" },
+              "&.Mui-disabled": { bgcolor: "#FFE0B2", color: "#fff" } 
             }}
           >
             설정 적용 및 미리보기
@@ -359,9 +359,9 @@ export default function EditorPage({ file, onFileChange }: EditorPageProps) {
             onClick={() => generateModel(true)} 
             disabled={isLoading}
             sx={{ 
-              bgcolor: "#213547", py: 1.5, fontWeight: "bold", mb: 2, 
-              "&:hover": { bgcolor: "#1a2c3d" },
-              "&.Mui-disabled": { bgcolor: "#546e7a", color: "#e0e0e0" } 
+              bgcolor: "#5D4037", py: 1.5, fontWeight: "bold", mb: 2, 
+              "&:hover": { bgcolor: "#4E342E" },
+              "&.Mui-disabled": { bgcolor: "#A1887F", color: "#EFEBE9" } 
             }}
           >
             STL 파일 다운로드
@@ -371,10 +371,19 @@ export default function EditorPage({ file, onFileChange }: EditorPageProps) {
             component="label" 
             fullWidth 
             variant="outlined" 
-            color="secondary"
             size="large"
             disabled={isLoading} 
-            sx={{ py: 1.5, fontWeight: "bold" }}
+            sx={{ 
+                py: 1.5, 
+                fontWeight: "bold", 
+                color: "#8D6E63", 
+                borderColor: "#8D6E63",
+                "&:hover": { 
+                  borderColor: "#5D4037", 
+                  color: "#5D4037", 
+                  bgcolor: "#FFF3E0" 
+                }
+              }}
           >
             새로운 파일 업로드
             <input 

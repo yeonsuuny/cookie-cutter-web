@@ -163,7 +163,7 @@
 /* (1) 헤더 전체 스타일 변경 */
 .site-header.compact {
     /* 👇 위아래 여백을 10px -> 4px로 확 줄입니다! */
-    padding: 8px 0; 
+    padding: 17px 0; 
     
     background-color: rgba(255, 249, 240, 0.98);
     box-shadow: 0 4px 10px rgba(0,0,0,0.05);
@@ -193,7 +193,7 @@
 /* ⭐️ 새로 추가된 박스 로고 스타일 */
 .box-logo {
     /* 👇 로고를 60px~65px 정도로 시원하게 키움 */
-    height: 47px; 
+    height: 50px; 
     width: auto;
     
     /* 그림자 및 효과 */
@@ -214,12 +214,12 @@
 }
 
 .site-header.compact .nav-menu ul {
-    gap: 40px; /* 메뉴 글씨 간격 좁힘 (70px -> 40px) */
+    gap: 60px; /* 메뉴 글씨 간격 좁힘 (70px -> 40px) */
     justify-content: flex-start;
 }
 
 .site-header.compact .nav-menu li {
-    font-size: 1.1rem; /* 글씨 크기 줄임 (1.4rem -> 1.1rem) */
+    font-size: 1.3rem; /* 글씨 크기 줄임 (1.4rem -> 1.1rem) */
 }
 
 /* (5) 로그인 버튼 위치 수직 중앙 정렬 */
@@ -230,7 +230,7 @@
 }
 
 .site-header.compact .auth-btn {
-    font-size: 0.95rem; /* 버튼 글씨도 살짝 작게 */
+    font-size: 1.2rem; /* 버튼 글씨도 살짝 작게 */
 }
 .site-header.compact .signup-btn {
     padding: 6px 18px;

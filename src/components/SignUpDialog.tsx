@@ -95,7 +95,7 @@ export default function SignUpDialog({ open, onClose, showSnackbar }: SignUpDial
             variant="contained" size="large" fullWidth onClick={handleSignUp}
             sx={{ fontWeight: "bold", py: 1.5, bgcolor: "#8D6E63", "&:hover": { bgcolor: "#6D4C41" } }}
           >
-            가입하기
+            가입
           </Button>
         </Stack>
       </DialogContent>
