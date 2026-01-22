@@ -10,13 +10,15 @@ interface HeaderProps {
   isLoggedIn: boolean;
   onLogoutClick: () => void;
   isCompact?: boolean;
+  isTransparent?: boolean;
 }
 
 const Header: React.FC<HeaderProps> = ({ 
   onLoginClick, onSignUpClick, onUploadClick, onLibraryClick,
   isLoggedIn, onLogoutClick,
-  isCompact = false 
-}) => {
+  isCompact = false,
+  isTransparent = false
+  }) => {
   // ✅ 1. 홈 화면용: 곰돌이 7마리 데이터 (복구!)
   const logoChars: string[] = ['3', 'D', 'L', 'I', 'G', 'H', 'T'];
   const bearImageUrl = "/bear_cookie.png";
@@ -26,7 +28,7 @@ const Header: React.FC<HeaderProps> = ({
   const boxLogoUrl = "/Group 5.svg"; 
 
   return (
-    <header className={`site-header ${isCompact ? 'compact' : ''}`}>
+    <header className={`site-header ${isCompact ? 'compact' : ''} ${isTransparent ? 'transparent' : ''}`}>
       
       <div className="auth-buttons">
         {isLoggedIn ? (
