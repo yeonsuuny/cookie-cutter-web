@@ -16,8 +16,8 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url('/bakery_bg.png'); /* ⭐️ 준비한 배경 이미지 경로 */
-  background-size: cover;       /* 화면 꽉 채우기 */
+  background-image: url('/background.png'); /* ⭐️ 준비한 배경 이미지 경로 */
+  background-size: 100% 100%;    /* 화면 꽉 채우기 */
   background-position: center bottom; /* 바닥(카운터) 기준 정렬 */
   z-index: 0;
 }
@@ -30,57 +30,13 @@
   display: flex !important;
   align-items: center; /* 세로 중앙 정렬 */
   justify-content: center;
-  padding-top: 100px; /* 헤더 공간만큼 띄우기 */
+  padding-top: 340px; /* 헤더 공간만큼 띄우기 */
 }
 
 /* 오븐 래퍼 (필요시 위치 미세조정) */
 .oven-wrapper {
   position: relative;
   z-index: 20;
-}
-
-/* =========================================
-   ✨ 연기 애니메이션 (Smoke)
-========================================= */
-.smoke-container {
-  position: absolute;
-  top: -60px; /* 오븐 위쪽 */
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100px;
-  height: 100px;
-  z-index: 15; /* 오븐 뒤, 배경 앞 */
-  pointer-events: none; /* 클릭 방해 안 하게 설정 */
-}
-
-.smoke {
-  position: absolute;
-  width: 40px;
-  height: 40px;
-  background-color: rgba(255, 255, 255, 0.6);
-  border-radius: 50%;
-  bottom: 0;
-  left: 30px;
-  opacity: 0;
-}
-
-/* 연기 3개가 시간차로 올라감 */
-.smoke-1 { animation: smoke-rise 3s infinite 0s; }
-.smoke-2 { animation: smoke-rise 3s infinite 1s; }
-.smoke-3 { animation: smoke-rise 3s infinite 2s; }
-
-@keyframes smoke-rise {
-  0% {
-    transform: translateY(0) scale(1);
-    opacity: 0;
-  }
-  20% {
-    opacity: 0.7;
-  }
-  100% {
-    transform: translateY(-80px) scale(2); /* 위로 올라가면서 커짐 */
-    opacity: 0;
-  }
 }
 
 /* =========================================
@@ -106,4 +62,51 @@
   40% { transform: translateY(20%); }       /* 빼꼼 올라옴 */
   60% { transform: translateY(20%); }       /* 눈치 봄 */
   70% { transform: translateY(100%); }      /* 다시 숨음 */
+}
+
+/* =========================================
+   🍪 테이블 위 소품 배치
+========================================= */
+
+/* 공통 스타일: 마우스 클릭 방해 금지 및 그림자 */
+.table-deco {
+  position: absolute;
+  z-index: 5; /* 배경(0)보다 위, 오븐(10)보다 아래 */
+  cursor: pointer;
+  filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.2));
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+/* 1. 왼쪽: 우유와 버터 */
+.deco-milk {
+  bottom: 5%;   /* 바닥에서의 높이 (책상 위에 있는 느낌) */
+  left: 11%;     /* 왼쪽 여백 */
+  width: 420px;  /* 크기 */
+  transform: rotate(-5deg); /* 살짝 기울기 */
+}
+
+/* (선택) 마우스 올렸을 때 살짝 커지게 하는 효과 */
+.deco-milk:hover {
+  transform: rotate(-5deg) scale(1.05);
+  filter: drop-shadow(0 0 2px #ffffff) drop-shadow(0 0 2px #ffffff);
+}
+
+/* 2. 오른쪽: 쿠키 커터 */
+.deco-cutter {
+  bottom: 4.5%;
+  right: 15%;    /* 오른쪽 여백 */
+  width: 270px;
+  transform: rotate(15deg);
+}
+
+.deco-cutter:hover {
+  transform: rotate(15deg) scale(1.05); 
+  
+  filter: drop-shadow(0 0 2px #ffffff) drop-shadow(0 0 2px #ffffff);
+}
+
+/* 📱 모바일 화면일 때 (화면이 좁으면 소품 숨기거나 조정) */
+@media (max-width: 1000px) {
+  .deco-milk { left: 5%; width: 150px; bottom: 20%; }
+  .deco-cutter { right: 5%; width: 100px; bottom: 22%; }
 }
