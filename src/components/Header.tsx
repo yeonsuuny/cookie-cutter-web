@@ -10,23 +10,21 @@ interface HeaderProps {
   isLoggedIn: boolean;
   onLogoutClick: () => void;
   isCompact?: boolean;
+  isTransparent?: boolean;
 }
 
 const Header: React.FC<HeaderProps> = ({ 
   onLoginClick, onSignUpClick, onUploadClick, onLibraryClick,
   isLoggedIn, onLogoutClick,
-  isCompact = false 
-}) => {
-  // ✅ 1. 홈 화면용: 곰돌이 7마리 데이터 (복구!)
-  const logoChars: string[] = ['3', 'D', 'L', 'I', 'G', 'H', 'T'];
-  const bearImageUrl = "/bear_cookie.png";
+  isCompact = false,
+  isTransparent = false
+  }) => {
   
-  // ✅ 2. 에디터 화면용: 박스 로고 이미지
-  // (아직 이미지가 없다면 임시로 텍스트나 다른 이미지를 넣어도 됩니다)
+  const woodSignUrl = "/tree.png";
   const boxLogoUrl = "/Group 5.svg"; 
 
   return (
-    <header className={`site-header ${isCompact ? 'compact' : ''}`}>
+    <header className={`site-header ${isCompact ? 'compact' : ''} ${isTransparent ? 'transparent' : ''}`}>
       
       <div className="auth-buttons">
         {isLoggedIn ? (
@@ -52,13 +50,10 @@ const Header: React.FC<HeaderProps> = ({
               className="box-logo" 
             />
           ) : (
-            // 🟩 [Case B] 홈 화면(기본)일 때 -> '곰돌이 7마리' 보여주기
-            logoChars.map((char, index) => (
-              <div key={index} className="bear-wrapper">
-                <img src={bearImageUrl} alt="곰돌이 쿠키" className="bear-img" />
-                <span className="bear-text">{char}</span>
-              </div>
-            ))
+            <div className="wood-logo-wrapper">
+              <img src={woodSignUrl} alt="3DLIGHT 나무간판" className="wood-sign-img" />
+              <span className="wood-sign-text">3DLIGHT</span>
+            </div>
           )}
 
         </div>

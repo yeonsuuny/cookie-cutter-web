@@ -126,6 +126,7 @@ export default function App() {
         isLoggedIn={isLoggedIn}
         onLogoutClick={handleLogout}
         isCompact={currentPage == "editor" || currentPage === "library"}
+        isTransparent={currentPage === "landing"}
       />
 
       <LoginDialog 

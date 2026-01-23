@@ -1,45 +1,47 @@
 // src/pages/LandingPage.tsx
-import { Box, Container, Typography } from "@mui/material";
+import { Box, Container } from "@mui/material";
 import OvenUploader from "../components/OvenUploader";
+import "./LandingPage.css"; // ⭐️ CSS 파일 연결 필수
 
 interface LandingPageProps {
   onStart: (file: File) => void;
-  // onCheckLogin 제거 (App에서 처리함)
 }
 
 export default function LandingPage({ onStart }: LandingPageProps) {
 
   const handleOvenFileSelect = (file: File) => {
-    // ⭐️ 로그인 체크 로직 삭제!
-    // 그냥 무조건 부모(App)에게 파일을 전달합니다.
     onStart(file);
   };
 
   return (
-    <Box sx={{ 
-      minHeight: "calc(100vh - 72px)", 
-      display: "flex", 
-      alignItems: "center", 
-      justifyContent: "center",
-      bgcolor: "#FFF9F0"
-    }}>
+    // 전체를 감싸는 래퍼 (기존 Box 대신 div 사용)
+    <div className="landing-page-wrapper"> 
       
-      <Container maxWidth="sm">
-        <Box sx={{ textAlign: "center" }}>
-          
-          <Typography variant="h4" fontWeight="bold" gutterBottom sx={{ color: "#5D4037", fontFamily: "'Jua', sans-serif" }}>
-            🍪 나만의 쿠키 커터 만들기
-          </Typography>
-          <Typography variant="body1" sx={{ mb: 4, color: "#8D6E63", fontSize: "1.1rem", fontFamily: "'Jua', sans-serif" }}>
-            오븐에 이미지를 넣으면 3D 모델로 구워드려요!
-          </Typography>
+      {/* ✅ 1. 배경 이미지 (여기로 분리됨!) */}
+      {/* CSS의 .bakery-background 클래스가 이미지를 담당합니다 */}
+      <div className="bakery-background" />
 
-          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+      {/* ✅ 2. 탁자 위 소품들 (배경 위에 얹기) */}
+      <img 
+        src="/milk_butter_pour.png" 
+        alt="Milk and Butter" 
+        className="table-deco deco-milk" 
+      />
+      <img 
+        src="/cookie_cutter.png" 
+        alt="Cookie Cutter" 
+        className="table-deco deco-cutter" 
+      />
+
+      {/* ✅ 3. 오븐 및 컨텐츠 (가장 위에 올라옴) */}
+      <Container maxWidth="sm" className="content-container">
+        <Box sx={{ textAlign: "center", width: "100%" }}>
+          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
              <OvenUploader onFileSelected={handleOvenFileSelect} />
           </Box>
-
         </Box>
       </Container>
-    </Box>
+      
+    </div>
   );
 }

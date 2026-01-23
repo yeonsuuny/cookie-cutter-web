@@ -2,6 +2,8 @@
 
 /* 폰트 불러오기 */
 @import url('https://fonts.googleapis.com/css2?family=Jua&display=swap');
+/* ✅ 2. 새로 쓸 로고용 폰트 (여기에 추가!) */
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
 
 /* =========================================
    1. 기본 레이아웃 (공통)
@@ -12,7 +14,7 @@
   position: relative; 
   background-color: #FFF9F0; 
   font-family: 'Jua', sans-serif;
-  padding: 30px 0 20px 0; 
+  padding: 0px 0 20px 0; 
   
   /* 부드러운 변환 효과 (모든 자식 요소 포함) */
   transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -80,55 +82,60 @@
 ========================================= */
 .logo-area {
   display: flex;
-  gap: 35px; 
+  justify-content: center; 
   cursor: pointer;
-  margin-top: 10px; 
+  margin-top: 0px; 
   align-items: center;
   transition: all 0.4s ease;
 }
 
-.bear-wrapper {
-  position: relative;
-  width: 75px;
-  height: 75px;
+/* ✅ 새로 추가된 나무 간판 스타일 */
+.wood-logo-wrapper {
+  position: relative; /* 자식 요소(텍스트)의 기준점 */
+  width: 300px;       /* 간판 크기 조절 (원하는 크기로 변경 가능) */
+  height: auto;
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: transform 0.3s ease;
+  margin-top: 0px;
 }
 
-.bear-img {
+/* 마우스 올렸을 때 흔들리는 효과 */
+.wood-logo-wrapper:hover {
+  transform: rotate(-2deg) scale(1.05);
+}
+
+.wood-sign-img {
   width: 100%;
-  height: 100%;
-  object-fit: contain;
-  filter: drop-shadow(0 4px 3px rgba(0,0,0,0.3)) drop-shadow(0 8px 10px rgba(0,0,0,0.15));
+  height: auto;
+  display: block;
+  /* 그림자 효과로 입체감 주기 */
+  filter: drop-shadow(0 10px 10px rgba(0,0,0,0.3));
 }
 
-.bear-text {
-  position: absolute;
-  font-size: 24px;
-  color: #5D4037;
-  font-weight: bold;
-  z-index: 10;
-  bottom: -10px;
+/* 간판 위의 텍스트 스타일 */
+.wood-sign-text {
+  position: absolute; /* 이미지 위에 띄우기 */
+  
+  /* 위치 조정 (이미지의 줄 부분 때문에 정중앙보다 살짝 아래로 내려야 할 수 있음) */
+  top: 65%;  
   left: 50%;
-  transform: translateX(-50%);
-  background-color: #FFECB3;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 50%;
-  border: 3px solid #E6D0B3;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.2),
-  inset 2px 2px 5px rgba(255, 255, 255, 0.8),
-  inset -2px -2px 4px rgba(0, 0, 0, 0.1);
+  transform: translate(-50%, -50%); /* 정확한 중앙 정렬 */
+  
+  /* 폰트 스타일 */
+  font-family: 'Fredoka One', cursive;
+  font-size: 3.1rem;   /* 글씨 크기 (간판 크기에 맞춰 조절) */
+  color: #3E2723;    /* 짙은 갈색 (나무에 새긴 느낌) */
+  
+  /* 글씨가 나무에 파인 듯한 느낌 or 페인트 느낌 */
+  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.4); 
+  
+  width: 100%;
+  text-align: center;
+  letter-spacing: 2px; /* 자간 살짝 넓게 */
+  z-index: 10;
 }
-
-.bear-wrapper:hover { transform: translateY(-12px) scale(1.1); }
-.bear-wrapper:nth-child(even):hover { transform: translateY(-12px) scale(1.1) rotate(5deg); }
-
 
 /* =========================================
    4. 네비게이션 메뉴 (공통)
@@ -234,4 +241,14 @@
 }
 .site-header.compact .signup-btn {
     padding: 6px 18px;
+}
+
+.site-header.transparent {
+  position: absolute;  /* 붕 띄워서 배경 위에 겹치게 만듦 */
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: transparent; /* 배경색 투명 */
+  box-shadow: none;    /* 그림자 제거 */
+  z-index: 999;        /* 배경보다 위에 오도록 */
 }
