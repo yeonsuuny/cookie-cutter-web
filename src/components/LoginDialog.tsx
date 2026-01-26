@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { Dialog, DialogTitle, DialogContent, TextField, Button, Stack, IconButton, Typography } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import { supabase } from "../supabaseClient";
 
 const validateEmail = (email: string) => {
   const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -23,6 +24,28 @@ export default function LoginDialog({
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState(false);
+
+  // ⭐️ [추가] 카카오 로그인 핸들러
+  const handleKakaoLogin = async () => {
+    try {
+      // Supabase를 통해 카카오 로그인 창 띄우기
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'kakao',
+        options: {
+        // 👇 핵심: 'account_email'을 빼고 닉네임, 사진만 요청합니다.
+        scopes: 'profile_nickname', 
+        
+        // (필요하다면 리다이렉트 주소 명시)
+        redirectTo: 'http://localhost:3000', 
+      },
+    });
+
+    if (error) throw error;
+  } catch (error) {
+    console.error("로그인 에러:", error);
+    alert("로그인 중 오류가 발생했습니다.");
+  }
+};
 
   const handleLogin = async () => {
     if (!validateEmail(email)) {
@@ -103,6 +126,24 @@ export default function LoginDialog({
             sx={{ fontWeight: "bold", py: 1.5, bgcolor: "#8D6E63", "&:hover": { bgcolor: "#6D4C41" } }}
           >
             로그인
+          </Button>
+
+          {/* ⭐️ [추가] 카카오 로그인 버튼 */}
+          <Button
+            variant="contained"
+            size="large"
+            fullWidth
+            onClick={handleKakaoLogin}
+            sx={{
+              fontWeight: "bold",
+              py: 1.5,
+              bgcolor: "#FEE500", // 카카오 노란색
+              color: "#000000",   // 카카오 검은 글씨
+              "&:hover": { bgcolor: "#E6CF00" },
+              mb: 1
+            }}
+          >
+            카카오톡으로 시작하기
           </Button>
 
           <Typography variant="body2" align="center" color="text.secondary" sx={{ cursor: "pointer", textDecoration: "underline" }}
