@@ -1,6 +1,7 @@
 // src/components/LoginDialog.tsx
 import { useState } from "react";
-import { Dialog, DialogTitle, DialogContent, TextField, Button, Stack, IconButton, Typography } from "@mui/material";
+// 1. Box 추가됨 👇
+import { Dialog, DialogTitle, DialogContent, TextField, Button, Stack, IconButton, Typography, Box } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { supabase } from "../supabaseClient";
 
@@ -14,30 +15,26 @@ interface LoginDialogProps {
   onClose: () => void;
   onSwitchToSignUp: () => void;
   onLoginSuccess?: () => void;
-  // ⭐️ 부모에게 받은 스낵바 함수 타입 정의
   showSnackbar: (message: string, severity: "success" | "error") => void;
+  onFindPasswordClick: () => void;
 }
 
+// 2. onFindPasswordClick 추가됨 👇
 export default function LoginDialog({ 
-  open, onClose, onSwitchToSignUp, onLoginSuccess, showSnackbar 
+  open, onClose, onSwitchToSignUp, onLoginSuccess, showSnackbar, onFindPasswordClick 
 }: LoginDialogProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState(false);
 
-  // ⭐️ [추가] 카카오 로그인 핸들러
   const handleKakaoLogin = async () => {
     try {
-      // Supabase를 통해 카카오 로그인 창 띄우기
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'kakao',
         options: {
-        // 👇 핵심: 'account_email'을 빼고 닉네임, 사진만 요청합니다.
-        scopes: 'profile_nickname profile_image', 
-        
-        // (필요하다면 리다이렉트 주소 명시)
-        redirectTo: window.location.origin,
-      },
+          scopes: 'profile_nickname profile_image', 
+          redirectTo: window.location.origin,
+        },
     });
 
     if (error) throw error;
@@ -50,7 +47,7 @@ export default function LoginDialog({
   const handleLogin = async () => {
     if (!validateEmail(email)) {
       setEmailError(true); 
-      showSnackbar("올바른 이메일 형식을 입력해주세요.", "error"); // 에러 알림
+      showSnackbar("올바른 이메일 형식을 입력해주세요.", "error"); 
       return; 
     }
     
@@ -64,12 +61,10 @@ export default function LoginDialog({
       const data = await response.json();
 
       if (response.ok) {
-        // ✅ 로그인 성공
         localStorage.setItem("accessToken", data.access_token);
         if (onLoginSuccess) onLoginSuccess();
-        onClose(); // 모달 닫기
+        onClose(); 
       } else {
-        // ❌ 로그인 실패 (서버 메시지 띄우기)
         showSnackbar(data.detail || "이메일 또는 비밀번호가 틀렸습니다.", "error");
       }
     } catch (error) {
@@ -78,13 +73,11 @@ export default function LoginDialog({
     }
   };
 
-  // ⭐️ [디자인] 공통 스타일 (갈색 테마 + 파란 배경 제거)
   const commonInputStyle = {
     "& label.Mui-focused": { color: "#8D6E63" },
     "& .MuiOutlinedInput-root": {
       "&.Mui-focused fieldset": { borderColor: "#8D6E63" }
     },
-    // 👇 자동완성 파란 배경 제거 핵심 코드
     "& input:-webkit-autofill": {
       WebkitBoxShadow: "0 0 0 1000px white inset",
       WebkitTextFillColor: "#000",
@@ -102,7 +95,6 @@ export default function LoginDialog({
         <Stack spacing={3} sx={{ mt: 1 }}>
           <TextField
             label="이메일" type="email" fullWidth variant="outlined" value={email} 
-            // 커서 나갈 때 유효성 검사
             onBlur={() => {
               if (email !== "" && !validateEmail(email)) setEmailError(true);
             }}
@@ -128,7 +120,6 @@ export default function LoginDialog({
             로그인
           </Button>
 
-          {/* ⭐️ [추가] 카카오 로그인 버튼 */}
           <Button
             variant="contained"
             size="large"
@@ -137,8 +128,8 @@ export default function LoginDialog({
             sx={{
               fontWeight: "bold",
               py: 1.5,
-              bgcolor: "#FEE500", // 카카오 노란색
-              color: "#000000",   // 카카오 검은 글씨
+              bgcolor: "#FEE500", 
+              color: "#000000",   
               "&:hover": { bgcolor: "#E6CF00" },
               mb: 1
             }}
@@ -146,15 +137,23 @@ export default function LoginDialog({
             카카오톡으로 시작하기
           </Button>
 
-          <Typography variant="body2" align="center" color="text.secondary" sx={{ cursor: "pointer", textDecoration: "underline" }}
-            onClick={() => { onClose(); onSwitchToSignUp(); }}
-          >
-            아직 계정이 없으신가요? 회원가입
-          </Typography>
+          <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 1 }}>
+            <Typography variant="body2" color="text.secondary" 
+              sx={{ cursor: "pointer", textDecoration: "underline" }}
+              onClick={() => { onClose(); onFindPasswordClick(); }} 
+            >
+              비밀번호를 잊으셨나요?
+            </Typography>
+
+            <Typography variant="body2" color="text.secondary" 
+              sx={{ cursor: "pointer", textDecoration: "underline" }}
+              onClick={() => { onClose(); onSwitchToSignUp(); }}
+            >
+              아직 계정이 없으신가요? 회원가입
+            </Typography>
+          </Box>
         </Stack>
       </DialogContent>
     </Dialog>
   );
 }
-
-

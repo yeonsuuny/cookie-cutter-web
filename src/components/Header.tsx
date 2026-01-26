@@ -22,7 +22,9 @@ const Header: React.FC<HeaderProps> = ({
   
   const woodSignUrl = "/tree.png";
   const boxLogoUrl = "/Group 5.svg";
-  const cookieBtnUrl = "/button.png"
+  const bearCookieUrl = "/bear_button.png";   // 업로드용 (곰돌이)
+  const catCookieUrl = "/bear_button.png";     // 샵용 (고양이)
+  const rabbitCookieUrl = "/bear_button.png"; // 보관함용 (토끼)
 
   return (
     <header className={`site-header ${isCompact ? 'compact' : ''} ${isTransparent ? 'transparent' : ''}`}>
@@ -61,16 +63,21 @@ const Header: React.FC<HeaderProps> = ({
 
         <nav className="nav-menu">
           <ul>
+            {/* 1. 업로드 (곰돌이) */}
             <li onClick={onUploadClick} className="cookie-btn">
-              <img src={cookieBtnUrl} alt="버튼 배경" />
+              <img src={bearCookieUrl} alt="곰돌이 쿠키" />
               <span className="cookie-text">업로드</span>
             </li>
+
+            {/* 2. 샵 (고양이) */}
             <li onClick={() => window.open('https://smartstore.naver.com/3dlight', '_blank')} className="cookie-btn">
-              <img src={cookieBtnUrl} alt="버튼 배경" />
+              <img src={catCookieUrl} alt="고양이 쿠키" />
               <span className="cookie-text">샵</span>
             </li>
+
+            {/* 3. 보관함 (토끼) */}
             <li onClick={onLibraryClick} className="cookie-btn">
-              <img src={cookieBtnUrl} alt="버튼 배경" />
+              <img src={rabbitCookieUrl} alt="토끼 쿠키" />
               <span className="cookie-text">보관함</span>
             </li>
           </ul>
