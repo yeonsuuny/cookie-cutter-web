@@ -29,7 +29,7 @@ export default function LoginDialog({
   const handleKakaoLogin = async () => {
     try {
       // Supabase를 통해 카카오 로그인 창 띄우기
-      const { data, error } = await supabase.auth.signInWithOAuth({
+      const { error } = await supabase.auth.signInWithOAuth({
         provider: 'kakao',
         options: {
         // 👇 핵심: 'account_email'을 빼고 닉네임, 사진만 요청합니다.
