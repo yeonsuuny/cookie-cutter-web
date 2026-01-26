@@ -36,7 +36,7 @@ export default function LoginDialog({
         scopes: 'profile_nickname', 
         
         // (필요하다면 리다이렉트 주소 명시)
-        redirectTo: 'http://localhost:3000', 
+        redirectTo: window.location.origin,
       },
     });
 
@@ -156,4 +156,5 @@ export default function LoginDialog({
     </Dialog>
   );
 }
+
 
