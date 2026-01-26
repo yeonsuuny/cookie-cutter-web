@@ -21,7 +21,8 @@ const Header: React.FC<HeaderProps> = ({
   }) => {
   
   const woodSignUrl = "/tree.png";
-  const boxLogoUrl = "/Group 5.svg"; 
+  const boxLogoUrl = "/Group 5.svg";
+  const cookieBtnUrl = "/button.png"
 
   return (
     <header className={`site-header ${isCompact ? 'compact' : ''} ${isTransparent ? 'transparent' : ''}`}>
@@ -60,9 +61,18 @@ const Header: React.FC<HeaderProps> = ({
 
         <nav className="nav-menu">
           <ul>
-            <li onClick={onUploadClick}>업로드</li>
-            <li onClick={() => window.open('https://smartstore.naver.com/3dlight', '_blank')}>샵</li>
-            <li onClick={onLibraryClick}>보관함</li>
+            <li onClick={onUploadClick} className="cookie-btn">
+              <img src={cookieBtnUrl} alt="버튼 배경" />
+              <span className="cookie-text">업로드</span>
+            </li>
+            <li onClick={() => window.open('https://smartstore.naver.com/3dlight', '_blank')} className="cookie-btn">
+              <img src={cookieBtnUrl} alt="버튼 배경" />
+              <span className="cookie-text">샵</span>
+            </li>
+            <li onClick={onLibraryClick} className="cookie-btn">
+              <img src={cookieBtnUrl} alt="버튼 배경" />
+              <span className="cookie-text">보관함</span>
+            </li>
           </ul>
         </nav>
       </div>

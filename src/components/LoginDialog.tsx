@@ -33,7 +33,7 @@ export default function LoginDialog({
         provider: 'kakao',
         options: {
         // 👇 핵심: 'account_email'을 빼고 닉네임, 사진만 요청합니다.
-        scopes: 'profile_nickname', 
+        scopes: 'profile_nickname profile_image', 
         
         // (필요하다면 리다이렉트 주소 명시)
         redirectTo: window.location.origin,
