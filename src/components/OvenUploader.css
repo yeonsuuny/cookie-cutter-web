@@ -6,9 +6,8 @@
   margin: 0 auto;
   cursor: pointer;
   transition: transform 0.2s ease;
-  
-  /* ⭐️ [중요] 연기가 오븐 밖으로 삐져나가도 보이게 설정 */
   overflow: visible !important; 
+  transform: translate(5px, 40px);
 }
 
 .oven-wrapper:hover 

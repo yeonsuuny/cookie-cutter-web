@@ -65,21 +65,23 @@ export default function App() {
   };
 
   useEffect(() => {
-    // ⭐️ [설계서 5.1 & 5.2 준수]
-    // 1. URL 해시(#)에 토큰이 있는지 직접 확인
-    if (window.location.hash && window.location.hash.includes("access_token")) {
-        
-        // 2. 토큰 문자열만 수동으로 추출 (라이브러리 검사 우회)
+    // ⭐️ [수정됨] 토큰이 있고, 동시에 "type=recovery"라는 표시가 있을 때만 재설정 페이지로 이동
+    // 카카오 로그인은 type=recovery가 없으므로 이 조건문에 걸리지 않음!
+    if (
+        window.location.hash && 
+        window.location.hash.includes("access_token") && 
+        window.location.hash.includes("type=recovery") 
+    ) {
         const hash = window.location.hash;
         const params = new URLSearchParams(hash.substring(1));
         const token = params.get("access_token");
 
         if (token) {
-            setResetToken(token); // State에 안전하게 백업
-            setCurrentPage("passwordReset"); // 페이지 이동
-
-            // 3. [보안] 주소창에서 토큰 지우기
+            setResetToken(token);
+            setCurrentPage("passwordReset");
+            // 주소창 청소
             window.history.replaceState(null, "", window.location.pathname);
+            return; // ⭐️ 중요: 여기서 함수 종료 (아래 로그인 로직과 섞이지 않게)
         }
     }
 

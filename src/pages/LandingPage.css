@@ -93,7 +93,7 @@
 
 /* 2. 오른쪽: 쿠키 커터 */
 .deco-cutter {
-  bottom: 4.5%;
+  bottom: 6%;
   right: 15%;    /* 오른쪽 여백 */
   width: 270px;
   transform: rotate(15deg);

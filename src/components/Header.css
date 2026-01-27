@@ -1,37 +1,34 @@
 /* src/components/Header.css */
 
-/* 폰트 불러오기 */
 @import url('https://fonts.googleapis.com/css2?family=Jua&display=swap');
-/* ✅ 2. 새로 쓸 로고용 폰트 (여기에 추가!) */
 @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
 
 /* =========================================
    1. 기본 레이아웃 (공통)
 ========================================= */
 
-/* 헤더 전체 (부모) */
 .site-header {
   position: relative; 
   background-color: #FFF9F0; 
   font-family: 'Jua', sans-serif;
-  padding: 0px 0 20px 0; 
-  
-  /* 부드러운 변환 효과 (모든 자식 요소 포함) */
+  padding: 10px 0; 
   transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  z-index: 100;
 }
 
-/* 중앙 정렬 컨테이너 (기본: 세로 배치) */
 .header-container {
   max-width: 1200px;
+  width: 100%;
   margin: 0 auto;
   padding: 0 40px;
-  display: flex;
-  flex-direction: column; /* 기본은 위아래 배치 (로고 위, 메뉴 아래) */
-  align-items: center;
-  justify-content: center;
-  position: relative;
   
-  transition: all 0.4s ease;
+  /* ⭐️ 변경: 가로 배치 및 중앙 정렬 */
+  display: flex;
+  flex-direction: row; 
+  align-items: center; 
+  justify-content: center; /* 메뉴를 중앙에 두기 위해 컨테이너는 중앙 정렬 */
+  position: relative; /* 자식 요소(로고)의 절대 위치 기준점 */
+  min-height: 134px; 
 }
 
 /* =========================================
@@ -39,25 +36,24 @@
 ========================================= */
 .auth-buttons {
   position: absolute;
-  right: 40px; 
-  top: 40px;   
+  right: 65px; 
+  top: 40px;
+  transform: none;
   display: flex;
   gap: 15px; 
   z-index: 100;
   align-items: center; 
-  transition: all 0.4s ease;
 }
 
 .auth-btn {
   background: none;
   border: none;
   font-family: 'Jua', sans-serif;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   color: #8D6E63;     
   cursor: pointer;
   padding: 5px;
   white-space: nowrap;
-  transition: all 0.2s;
 }
 
 .signup-btn {
@@ -66,7 +62,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 8px 24px;
+  padding: 6px 20px;
   border-radius: 30px;
 }
 
@@ -78,32 +74,33 @@
   color: #FFF9F0 !important;
 }
 
-
 /* =========================================
-   3. 홈 화면용 로고 (곰돌이 7마리)
+   3. 로고 영역 (나무 간판) - ⭐️ 왼쪽 고정
 ========================================= */
 .logo-area {
+  /* ⭐️ 절대 위치로 변경하여 왼쪽 구석에 고정 */
+  position: absolute;
+  left: -75px; /* 왼쪽 여백 */
+  top: 50%;
+  transform: translateY(-50%); 
+  
   display: flex;
   justify-content: center; 
-  cursor: pointer;
-  margin-top: 0px; 
   align-items: center;
-  transition: all 0.4s ease;
+  cursor: pointer;
+  z-index: 20; 
 }
 
-/* ✅ 새로 추가된 나무 간판 스타일 */
 .wood-logo-wrapper {
-  position: relative; /* 자식 요소(텍스트)의 기준점 */
-  width: 300px;       /* 간판 크기 조절 (원하는 크기로 변경 가능) */
+  position: relative;
+  width: 330px; /* 로고 크기 적절히 조절 (왼쪽에 어울리게) */
   height: auto;
   display: flex;
   justify-content: center;
   align-items: center;
   transition: transform 0.3s ease;
-  margin-top: 0px;
 }
 
-/* 마우스 올렸을 때 흔들리는 효과 */
 .wood-logo-wrapper:hover {
   transform: rotate(-2deg) scale(1.05);
 }
@@ -112,305 +109,220 @@
   width: 100%;
   height: auto;
   display: block;
-  /* 그림자 효과로 입체감 주기 */
-  filter: drop-shadow(0 10px 10px rgba(0,0,0,0.3));
+  filter: drop-shadow(0 4px 4px rgba(0,0,0,0.2));
 }
 
-/* 간판 위의 텍스트 스타일 */
 .wood-sign-text {
-  position: absolute; /* 이미지 위에 띄우기 */
-  
-  /* 위치 조정 (이미지의 줄 부분 때문에 정중앙보다 살짝 아래로 내려야 할 수 있음) */
-  top: 65%;  
+  position: absolute;
+  top: 62%;  
   left: 50%;
-  transform: translate(-50%, -50%); /* 정확한 중앙 정렬 */
+  transform: translate(-50%, -50%);
   
-  /* 폰트 스타일 */
   font-family: 'Fredoka One', cursive;
-  font-size: 3.1rem;   /* 글씨 크기 (간판 크기에 맞춰 조절) */
-  color: #3E2723;    /* 짙은 갈색 (나무에 새긴 느낌) */
-  
-  /* 글씨가 나무에 파인 듯한 느낌 or 페인트 느낌 */
+  font-size: 3.3rem; /* 폰트 크기 조절 */
+  color: #3E2723;
   text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.4); 
-  
   width: 100%;
   text-align: center;
-  letter-spacing: 2px; /* 자간 살짝 넓게 */
-  z-index: 10;
+  letter-spacing: 1px;
 }
 
 /* =========================================
-   4. 네비게이션 메뉴 (공통)
+   4. 네비게이션 메뉴 (Threebox) - ⭐️ 중앙 배치
 ========================================= */
 .nav-menu {
-  position: relative;  /* 흐름에서 빠져나와 둥둥 뜸 */
-  right: auto;       /* 오른쪽 벽에서 20px 떨어짐 */
-  top: auto;           /* 높이는 중앙 */
-  transform: none;
-  margin-top: 30px;
+  position: relative;
+  margin-top: 70px;
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  width: 500px; /* Threebox 이미지 너비와 비슷하게 */
+  height: 80px;
   z-index: 10;
 }
 
+/* Threebox 배경 이미지 */
+.nav-threebox {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%; 
+  height: auto; /* 비율 유지 */
+  z-index: 0;
+  pointer-events: none;
+  /* 살짝 그림자 */
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+}
+
+/* 버튼 리스트 (UL) */
 .nav-menu ul {
+  position: relative;
   display: flex;
-  gap: 70px;
-  list-style: none;
+  justify-content: center;
+  gap: 89px;
+  width: 100%;
   margin: 0;
   padding: 0;
+  list-style: none;
+  z-index: 2;
   align-items: center;
-  transition: all 0.4s ease;
 }
 
-.nav-menu li {
-  font-size: 1.4rem;
-  color: #5D4037;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.nav-menu li:hover {
-  color: #FF7043;
-  transform: translateY(-2px);
-}
-
-
-/* =========================================================
-   ⭐️ 5. 슬림 모드 (EditorPage용) - 박스 로고 & 가로 배치
-   ========================================================= */
-
-/* (1) 헤더 전체 스타일 변경 */
-.site-header.compact {
-    /* 👇 위아래 여백을 10px -> 4px로 확 줄입니다! */
-    padding: 17px 0; 
-    
-    background-color: rgba(255, 249, 240, 0.98);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    border-bottom: 1px solid rgba(0,0,0,0.05);
-    
-    /* (선택) 헤더 높이가 70px를 넘지 않게 강제하고 싶다면 주석 해제 */
-    /* height: 70px; */
-    /* box-sizing: border-box; */
-}
-
-/* (2) 컨테이너를 가로(Row) 배치로 변경 */
-.site-header.compact .header-container {
-    flex-direction: row;        /* ⭐️ 가로 한 줄 정렬 */
-    justify-content: flex-start; /* 왼쪽부터 차례대로 */
-    align-items: center;        /* 수직 중앙 */
-    max-width: 100%;            /* 화면 전체 너비 */
-    padding: 0 40px;            /* 좌우 여백 */
-}
-
-/* (3) 로고 영역 수정 (박스 로고) */
-.site-header.compact .logo-area {
-    margin-top: 0;
-    margin-right: 60px; /* ⭐️ 로고와 메뉴 사이 간격 */
-    gap: 0;
-}
-
-/* ⭐️ 새로 추가된 박스 로고 스타일 */
-.box-logo {
-    /* 👇 로고를 60px~65px 정도로 시원하게 키움 */
-    height: 50px; 
-    width: auto;
-    
-    /* 그림자 및 효과 */
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
-    transition: transform 0.2s;
-    
-    /* 이미지가 위아래로 꽉 차 보이게 설정 */
-    display: block; 
-}
-
-.box-logo:hover {
-    transform: scale(1.05);
-}
-
-/* (4) 메뉴바 스타일 수정 */
-.site-header.compact .nav-menu {
-    position: static;
-    transform: none;
-    flex-grow: 1; /* 남은 공간 차지 */
-    margin: 0;
-}
-
-.site-header.compact .nav-menu ul {
-    gap: 60px; /* 메뉴 글씨 간격 좁힘 (70px -> 40px) */
-    justify-content: flex-start;
-}
-
-.site-header.compact .nav-menu li {
-    font-size: 1.3rem; /* 글씨 크기 줄임 (1.4rem -> 1.1rem) */
-}
-
-/* (5) 로그인 버튼 위치 수직 중앙 정렬 */
-.site-header.compact .auth-buttons {
-    top: 50%;                 /* 헤더 높이의 50% 지점 */
-    transform: translateY(-50%); /* 정확히 중앙으로 이동 */
-    right: 40px;              
-}
-
-.site-header.compact .auth-btn {
-    font-size: 1.2rem; /* 버튼 글씨도 살짝 작게 */
-}
-.site-header.compact .signup-btn {
-    padding: 6px 18px;
-}
-
-.site-header.transparent {
-  position: absolute;  /* 붕 띄워서 배경 위에 겹치게 만듦 */
-  top: 0;
-  left: 0;
-  width: 100%;
-  background-color: transparent; /* 배경색 투명 */
-  box-shadow: none;    /* 그림자 제거 */
-  z-index: 999;        /* 배경보다 위에 오도록 */
-}
-
-/* =========================================
-   ✅ 6. 곰돌이 쿠키 메뉴 버튼 스타일 (수정됨: 메뉴판이 앞으로 옴)
-========================================= */
-
-/* 메뉴 리스트 정렬 */
-.nav-menu ul {
-  gap: 30px; 
-  align-items: flex-start; 
-}
-
-/* 개별 버튼 컨테이너 (li) */
+/* 개별 버튼 (LI) */
 .cookie-btn {
   display: flex;
   flex-direction: column; 
   align-items: center;    
-  position: relative;
   cursor: pointer;
-  width: auto;            
   transition: transform 0.2s ease;
-  list-style: none; 
 }
 
 .cookie-btn:hover {
-  transform: translateY(-5px); 
+  transform: translateY(-5px); /* 호버 시 위로 둥둥 */
 }
 
-/* 1. 곰돌이 쿠키 이미지 */
+/* 버튼 아이콘 이미지 */
 .cookie-btn img {
-  width: 100px;  
+  width: 75px; /* 아이콘 크기 */
   height: auto;
-  position: relative;
   
-  /* ⭐️ 수정됨: 숫자를 1로 낮춰서 판넬 뒤로 보냄 */
-  z-index: 1;    
-  
-  filter: drop-shadow(0 4px 5px rgba(0,0,0,0.15)); 
+  /* ⭐️ 위치 미세 조정: Threebox 중앙에 오도록 */
+  transform: translateY(-3px); 
+  filter: drop-shadow(0 2px 3px rgba(0,0,0,0.15));
 }
 
+/* 텍스트 숨김 (요청사항) */
 .cookie-btn .cookie-text {
-  /* ✅ 배경: 홈페이지 배경과 같은 밝은 아이보리색 */
-  background-color: #FFF9F0;  
-  
-  /* ✅ 글씨: 밝은 배경 위니까 진한 갈색으로 변경 */
-  color: #5D4037;             
-  
-  font-family: 'Jua', sans-serif;
-  font-size: 0.9rem;          
-  
-  /* 모양: 알약 형태 유지 */
-  padding: 6px 18px;          
-  border-radius: 50px;        
-  
-  /* ✅ 테두리: 글씨색과 맞춰서 진한 갈색으로 또렷하게 */
-  border: 2px solid #5D4037;  
-
-  /* 위치 조정 (곰돌이 턱 밑) */
-  margin-top: -25px;          
-  
-  position: relative;
-  z-index: 10;                
-  
-  /* 크기 및 정렬 */
-  min-width: auto;            
-  text-align: center;
-  white-space: nowrap;
-  
-  /* 그림자: 살짝 줘서 입체감 살리기 */
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
-  text-shadow: none;
-}
-
-/* =========================================================
-   ⭐️ 슬림 모드(업로드/보관함 페이지)일 때 쿠키 디자인 제거
-   ========================================================= */
-
-/* 1. 쿠키 이미지 숨기기 */
-.site-header.compact .cookie-btn img {
   display: none;
 }
 
-/* 2. 버튼 컨테이너(li) 초기화 */
-.site-header.compact .cookie-btn {
-  width: auto;       /* 고정된 크기(90px) 해제 */
-  height: auto;
-  margin: 0;
-  display: block;    /* flex 해제하고 기본으로 */
+
+/* =========================================
+   5. 슬림 모드 (Compact - 에디터/보관함 페이지)
+========================================= */
+.site-header.compact {
+    padding: 10px 0; 
+    background-color: rgba(255, 249, 240, 0.98);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    border-bottom: 1px solid rgba(0,0,0,0.05);
 }
 
-/* 3. 텍스트 스타일을 '일반 글씨'로 되돌리기 */
+.site-header.compact .header-container {
+    justify-content: flex-start; /* 슬림 모드에선 왼쪽 정렬 */
+}
+
+/* 슬림 모드 로고 */
+.site-header.compact .logo-area {
+    position: relative; /* 절대 위치 해제 */
+    left: auto;
+    top: auto;
+    transform: none;
+    margin-right: 40px;
+}
+
+.site-header.compact .box-logo {
+    height: 40px; 
+    width: auto;
+}
+
+/* 슬림 모드 메뉴 */
+.site-header.compact .nav-menu {
+    width: auto;
+    height: auto;
+    margin: 0;
+}
+
+.site-header.compact .nav-threebox {
+    display: none; /* 배경 숨김 */
+}
+
+.site-header.compact .nav-menu ul {
+    gap: 40px;
+    padding: 0;
+}
+
+.site-header.compact .cookie-btn img {
+    display: none; /* 아이콘 숨김 */
+}
+
 .site-header.compact .cookie-btn .cookie-text {
-  position: static;  /* 절대 위치(공중에 뜸) 해제 */
-  transform: none;   /* 중앙 정렬 이동 해제 */
-  
-  /* 일반 메뉴처럼 보이게 스타일링 */
-  font-size: 1.3rem; 
-  color: #5D4037;    /* 진한 갈색 */
-  padding: 5px 10px; /* 클릭하기 편하게 여백 줌 */
+    display: block; /* 텍스트 보이기 */
+    font-size: 1.1rem;
+    color: #5D4037;
+    background: none;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
 }
 
-/* 4. 마우스 올렸을 때 효과 변경 (쿠키처럼 둥실 X -> 글씨 색 변경 O) */
 .site-header.compact .cookie-btn:hover {
-  transform: translateY(-2px) !important; /* 살짝만 위로 */
-  /* 배경 이미지 확대되는 것 방지 */
+    transform: none;
 }
-
-/* 3. 텍스트 스타일을 '일반 글씨'로 되돌리기 (수정됨) */
-.site-header.compact .cookie-btn .cookie-text {
-  /* ⭐️ 판넬 디자인 강제 제거 (이 부분이 핵심!) */
-  background-color: transparent; /* 배경 투명하게 */
-  border: none;                  /* 테두리 없애기 */
-  box-shadow: none;              /* 그림자 없애기 */
-  margin-top: 0;                 /* 위로 당겼던 것 원상복구 */
-  padding: 0;                    /* 안쪽 여백 제거 */
-  min-width: auto;               /* 최소 너비 해제 */
-  
-  /* 원래 메뉴 텍스트 스타일로 복귀 */
-  position: static;  
-  transform: none;   
-  font-size: 1.3rem; /* 원래 글씨 크기 */
-  color: #5D4037;    /* 원래 글씨 색 (진한 갈색) */
-  font-family: 'Jua', sans-serif;
-}
-
-/* 4. 마우스 올렸을 때 효과 변경 (판넬 없이 글씨만 색깔 변화) */
-.site-header.compact .cookie-btn:hover {
-  transform: translateY(-2px); /* 살짝만 위로 */
-}
-
 .site-header.compact .cookie-btn:hover .cookie-text {
-  color: #FF7043; /* 주황색으로 하이라이트 */
-  background-color: transparent; /* 배경색 생기지 않도록 방지 */
+    color: #FF7043;
 }
 
-@media (max-width: 768px) {
+/* =========================================
+   6. 투명 모드 (랜딩 페이지)
+========================================= */
+.site-header.transparent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: transparent;
+  box-shadow: none;
+  z-index: 999;
+}
+
+/* =========================================
+   반응형 (모바일)
+========================================= */
+@media (max-width: 900px) {
   .header-container {
-    flex-direction: column;
-    gap: 30px;
+    flex-direction: column; /* 모바일은 세로 배치 */
+    height: auto;
+    padding-bottom: 20px;
+  }
+  
+  .logo-area {
+    position: relative; 
+    left: auto;
+    top: auto;
+    transform: none;
+    margin-bottom: 10px;
   }
 
-  /* ✅ 모바일에서는 absolute 해제 (추가해주세요!) */
   .nav-menu {
-    position: static;    /* 고정 해제, 원래 흐름대로 */
-    transform: none;     /* 위치 이동 효과 제거 */
-    margin-top: 10px;    /* 로고와의 간격 확보 */
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .auth-buttons {
+    top: 20px;
+    right: 20px;
   }
 }
 
+/* 1. 첫 번째 버튼 (업로드 - 곰돌이) */
+.nav-menu ul li:nth-child(1) img {
+  width: 70px; /* 원하는 크기로 조절 */
+  /* 높낮이 미세 조정이 필요하면 아래 숫자 변경 */
+  transform: translateY(-3px); 
+}
+
+/* 2. 두 번째 버튼 (샵 - 고양이) */
+.nav-menu ul li:nth-child(2) img {
+  width: 65px; /* 얘는 좀 더 크게! */
+  transform: translateY(-5px); /* 크니까 위치도 살짝 다르게 */
+}
+
+/* 3. 세 번째 버튼 (보관함 - 토끼) */
+.nav-menu ul li:nth-child(3) img {
+  width: 55px; /* 얘는 중간 크기 */
+  transform: translateY(-4px);
+}

@@ -22,9 +22,9 @@ const Header: React.FC<HeaderProps> = ({
   
   const woodSignUrl = "/tree.png";
   const boxLogoUrl = "/Group 5.svg";
-  const bearCookieUrl = "/bear_button.png";   // 업로드용 (곰돌이)
-  const catCookieUrl = "/bear_button.png";     // 샵용 (고양이)
-  const rabbitCookieUrl = "/bear_button.png"; // 보관함용 (토끼)
+  const bearCookieUrl = "/upload1.png";   // 업로드용
+  const catCookieUrl = "/shop1.png";     // 샵용
+  const rabbitCookieUrl = "/storage1.png"; // 보관함용
 
   return (
     <header className={`site-header ${isCompact ? 'compact' : ''} ${isTransparent ? 'transparent' : ''}`}>
@@ -62,6 +62,9 @@ const Header: React.FC<HeaderProps> = ({
         </div>
 
         <nav className="nav-menu">
+          {/* ✅ threebox 배경 */}
+          <img className="nav-threebox" src="/threebox.png" alt="menu background" />
+
           <ul>
             {/* 1. 업로드 (곰돌이) */}
             <li onClick={onUploadClick} className="cookie-btn">
