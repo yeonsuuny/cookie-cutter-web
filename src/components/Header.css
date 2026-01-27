@@ -201,69 +201,109 @@
 
 
 /* =========================================
-   5. 슬림 모드 (Compact - 에디터/보관함 페이지)
+   5. 슬림 모드 (Compact - 에디터/보관함/비밀번호재설정 페이지)
+   ⭐️ 홈 화면 스타일(높이, 마진 등)을 여기서 강제로 끄는 것이 핵심입니다.
 ========================================= */
 .site-header.compact {
-    padding: 10px 0; 
+    padding: 0; /* 상하 패딩 제거 */
     background-color: rgba(255, 249, 240, 0.98);
     box-shadow: 0 4px 10px rgba(0,0,0,0.05);
     border-bottom: 1px solid rgba(0,0,0,0.05);
 }
 
 .site-header.compact .header-container {
-    justify-content: flex-start; /* 슬림 모드에선 왼쪽 정렬 */
+    /* ⭐️ 홈 화면용 높이(134px) 무시하고 슬림하게 재설정 */
+    min-height: 90px; 
+    height: 60px;
+    
+    /* 요소 배치: 양옆으로 벌리기 (왼쪽 로고, 오른쪽 메뉴) */
+    justify-content: space-between; 
+    padding: 0 40px;
+    max-width: 100%;
 }
 
 /* 슬림 모드 로고 */
 .site-header.compact .logo-area {
-    position: relative; /* 절대 위치 해제 */
+    /* ⭐️ 홈 화면용 절대위치(absolute) 무시 */
+    position: static; 
+    transform: none;
+    margin: 0;
     left: auto;
     top: auto;
-    transform: none;
-    margin-right: 40px;
+    
+    /* 로고 영역 크기 잡기 */
+    display: flex;
+    align-items: center;
 }
 
 .site-header.compact .box-logo {
-    height: 40px; 
+    height: 55px; /* 로고 크기 적당히 */
     width: auto;
 }
 
 /* 슬림 모드 메뉴 */
 .site-header.compact .nav-menu {
+    /* ⭐️ 홈 화면용 마진(70px) 제거 */
+    margin-top: 0; 
     width: auto;
-    height: auto;
-    margin: 0;
+    height: 100%;
+    
+    /* 메뉴 가로 정렬 */
+    display: flex;
+    align-items: center;
+    margin-right: 1350px;
 }
 
 .site-header.compact .nav-threebox {
-    display: none; /* 배경 숨김 */
+    display: none; /* 나무 박스 배경 숨김 */
 }
 
 .site-header.compact .nav-menu ul {
-    gap: 40px;
+    gap: 60px; /* 메뉴 간격 좁히기 */
     padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
 }
 
+/* 쿠키 아이콘 숨기고 텍스트만 보이기 */
 .site-header.compact .cookie-btn img {
-    display: none; /* 아이콘 숨김 */
+    display: none; 
+}
+
+.site-header.compact .cookie-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: auto;
+    transform: none !important; /* 둥둥 뜨는 애니메이션 끄기 */
 }
 
 .site-header.compact .cookie-btn .cookie-text {
     display: block; /* 텍스트 보이기 */
-    font-size: 1.1rem;
+    font-family: 'Jua', sans-serif;
+    font-size: 1.3rem;
     color: #5D4037;
     background: none;
     border: none;
     box-shadow: none;
     padding: 0;
     margin: 0;
+    cursor: pointer;
+    transition: color 0.2s ease;
 }
 
-.site-header.compact .cookie-btn:hover {
-    transform: none;
-}
 .site-header.compact .cookie-btn:hover .cookie-text {
-    color: #FF7043;
+    color: #FF7043; /* 호버 시 색상 변경 */
+}
+
+/* 로그인 버튼 위치 재조정 (슬림 모드일 때) */
+.site-header.compact .auth-buttons {
+    /* 기존 절대 위치 무시하고 메뉴 옆으로 붙이거나, 
+       혹은 그대로 두고 싶다면 top 값만 조절 */
+    top: 50%;
+    transform: translateY(-50%);
+    right: 30px;
 }
 
 /* =========================================
