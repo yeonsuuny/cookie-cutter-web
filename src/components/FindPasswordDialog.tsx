@@ -1,8 +1,12 @@
 // src/components/FindPasswordDialog.tsx
-import { useState, useEffect } from "react"; // ⭐️ useEffect 추가
+import { useState, useEffect } from "react";
 import { Dialog, DialogTitle, DialogContent, TextField, Button, Stack, IconButton, Typography } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
+// =============================================================================
+// [1] 유틸리티 함수
+// =============================================================================
+// 이메일 형식이 올바른지 정규식으로 검사하는 함수
 const validateEmail = (email: string) => {
   const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return regex.test(email);
@@ -15,65 +19,74 @@ interface FindPasswordDialogProps {
 }
 
 export default function FindPasswordDialog({ open, onClose, showSnackbar }: FindPasswordDialogProps) {
+  // ===========================================================================
+  // [2] 상태 관리 (State)
+  // ===========================================================================
+  // 2-1. 입력 폼 관련 상태
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState(false);
 
-  // ⭐️ [추가] 쿨타임 관련 상태
-  const [isCoolingDown, setIsCoolingDown] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(0);
+  // 2-2. 쿨타임(타이머) 관련 상태 (백엔드 보안 정책 대응)
+  const [isCoolingDown, setIsCoolingDown] = useState(false); // 현재 대기 중인지 여부
+  const [timeLeft, setTimeLeft] = useState(0);               // 남은 시간 (초)
 
-  // ⭐️ [추가] 타이머 로직
+  // ===========================================================================
+  // [3] 타이머 로직 (useEffect)
+  // ===========================================================================
+  // 쿨타임이 시작되면 1초마다 timeLeft를 1씩 줄입니다.
+  // 시간이 0이 되면 쿨타임 상태를 해제합니다.
   useEffect(() => {
-    let timer: number | undefined; // NodeJS.Timeout 타입 호환용
+    let timer: number | undefined;
 
     if (isCoolingDown && timeLeft > 0) {
       timer = window.setInterval(() => {
         setTimeLeft((prev) => prev - 1);
       }, 1000);
     } else if (timeLeft === 0) {
-      // 시간이 다 되면 쿨타임 해제
+      // 카운트다운 종료 시: 다시 버튼 활성화
       setIsCoolingDown(false);
     }
 
+    // 컴포넌트가 사라지거나 재실행될 때 타이머 정리 (메모리 누수 방지)
     return () => clearInterval(timer);
   }, [isCoolingDown, timeLeft]);
 
+  // ===========================================================================
+  // [4] 이벤트 핸들러 (API 통신)
+  // ===========================================================================
   const handleSendEmail = async () => {
+    // 4-1. 유효성 검사 (이메일 형식 확인)
     if (!validateEmail(email)) {
       setEmailError(true);
       return;
     }
 
-    // ⭐️ [보호] 혹시라도 버튼이 활성화되어 있어도 쿨타임 중이면 함수 종료
+    // 4-2. 중복 클릭 방지 (이미 쿨타임 중이면 함수 종료)
     if (isCoolingDown) return;
 
     try {
+      // 4-3. 서버로 비밀번호 재설정 요청 전송
       const response = await fetch("https://cookie-cutter-server.onrender.com/password/request-reset", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
           email: email, 
-          redirect_url: window.location.origin 
+          redirect_url: window.location.origin // 이메일 링크 클릭 시 돌아올 주소
         }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
+        // 4-4. 성공 시 처리
         showSnackbar("재설정 이메일이 발송되었습니다. 메일함을 확인해주세요!", "success");
         
-        // ⭐️ [변경] 성공 시 창을 닫지 않고 쿨타임 시작 (UX 선택 사항)
-        // 백엔드 요청대로 "1분을 기다려야 함"을 인지시키기 위해 창을 닫지 않는 것이 좋을 수 있습니다.
-        // 만약 창을 닫고 싶다면 onClose()를 호출하되, 
-        // 쿨타임 로직은 이 컴포넌트가 언마운트되면 사라지므로 
-        // "전송 완료" 메시지만 띄우고 창을 닫는 것이 일반적이긴 합니다.
-        // 여기서는 "버튼 비활성화"를 보여주기 위해 창을 유지하고 안내 메시지를 띄우는 방식으로 구현했습니다.
-        
+        // 중요: 메일 발송 성공 시 60초 쿨타임 시작 (학대 방지)
         setIsCoolingDown(true);
-        setTimeLeft(60); // 60초 설정
+        setTimeLeft(60);
         
-        // 이메일 입력창은 비워주거나 유지할 수 있습니다. (여기선 유지하여 오타 수정 가능하게 함)
       } else {
+        // 4-5. 실패 시 처리 (서버 에러 메시지 표시)
         showSnackbar(data.detail || "이메일 발송에 실패했습니다.", "error");
       }
     } catch (error) {
@@ -81,17 +94,6 @@ export default function FindPasswordDialog({ open, onClose, showSnackbar }: Find
       showSnackbar("서버 통신 중 오류가 발생했습니다.", "error");
     }
   };
-
-  // ⭐️ [추가] 다이얼로그가 닫혔다 열릴 때 상태 초기화 여부 결정
-  // (필요 시 주석 해제: 다이얼로그 닫으면 타이머 리셋하려면 아래 코드 사용)
-  /*
-  useEffect(() => {
-    if (!open) {
-      // setIsCoolingDown(false);
-      // setTimeLeft(0);
-    }
-  }, [open]);
-  */
 
   const commonInputStyle = {
     "& label.Mui-focused": { color: "#8D6E63" },
@@ -104,8 +106,12 @@ export default function FindPasswordDialog({ open, onClose, showSnackbar }: Find
     }
   };
 
+  // ===========================================================================
+  // [5] UI 렌더링
+  // ===========================================================================
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="xs">
+      {/* 5-1. 다이얼로그 헤더 (제목 + 닫기 버튼) */}
       <DialogTitle sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         비밀번호 찾기
         <IconButton onClick={onClose}><CloseIcon /></IconButton>
@@ -113,9 +119,11 @@ export default function FindPasswordDialog({ open, onClose, showSnackbar }: Find
       
       <DialogContent>
         <Stack spacing={3} sx={{ mt: 1 }}>
+          {/* 5-2. 안내 문구 영역 */}
           <Typography variant="body2" color="text.secondary">
             가입하신 이메일 주소를 입력하시면<br/>비밀번호 재설정 링크를 보내드립니다.
-            {/* ⭐️ [추가] 안내 문구 */}
+            
+            {/* 조건부 렌더링: 쿨타임 중일 때만 경고 문구 표시 */}
             {isCoolingDown && (
               <span style={{ color: "#d32f2f", display: "block", marginTop: "8px", fontWeight: "bold" }}>
                 ⚠️ 보안을 위해 메일 재발송은 1분 간격으로 가능합니다.
@@ -123,6 +131,7 @@ export default function FindPasswordDialog({ open, onClose, showSnackbar }: Find
             )}
           </Typography>
 
+          {/* 5-3. 이메일 입력 필드 */}
           <TextField
             label="이메일" type="email" fullWidth variant="outlined" value={email} 
             onChange={(e) => {
@@ -132,25 +141,27 @@ export default function FindPasswordDialog({ open, onClose, showSnackbar }: Find
             error={emailError}
             helperText={emailError ? "올바른 이메일 형식이 아닙니다." : ""}
             sx={commonInputStyle}
-            // ⭐️ [선택] 쿨타임 중에는 이메일 수정도 막으려면 disabled={isCoolingDown} 추가
           />
           
+          {/* 5-4. 전송 버튼 (상태에 따라 모양/텍스트 변경) */}
           <Button 
             variant="contained" size="large" fullWidth onClick={handleSendEmail}
-            // ⭐️ [핵심] 쿨타임 중이면 버튼 비활성화
+            
+            // 쿨타임 중이면 버튼 비활성화 (클릭 불가)
             disabled={isCoolingDown}
             sx={{ 
               fontWeight: "bold", py: 1.5, 
               bgcolor: "#8D6E63", 
               "&:hover": { bgcolor: "#6D4C41" },
-              // 비활성화 상태 스타일 (MUI 기본값 덮어쓰기 필요 시)
+              
+              // 비활성화 상태 스타일
               "&.Mui-disabled": {
                 bgcolor: "#D7CCC8",
                 color: "#5D4037"
               }
             }}
           >
-            {/* ⭐️ [핵심] 텍스트 변경 로직 */}
+            {/* 쿨타임 중이면 남은 시간 표시, 아니면 기본 텍스트 표시 */}
             {isCoolingDown ? `${timeLeft}초 후 재전송 가능` : "메일 보내기"}
           </Button>
         </Stack>

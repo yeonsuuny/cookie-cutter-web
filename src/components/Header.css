@@ -1,12 +1,12 @@
-/* src/components/Header.css */
-
+/* =============================================================================
+   [0] 폰트 가져오기 (Google Fonts)
+   ============================================================================= */
 @import url('https://fonts.googleapis.com/css2?family=Jua&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
 
-/* =========================================
-   1. 기본 레이아웃 (공통)
-========================================= */
-
+/* =============================================================================
+   [1] 기본 레이아웃 (공통)
+   ============================================================================= */
 .site-header {
   position: relative; 
   background-color: #FFF9F0; 
@@ -22,7 +22,7 @@
   margin: 0 auto;
   padding: 0 40px;
   
-  /* ⭐️ 변경: 가로 배치 및 중앙 정렬 */
+  /* 가로 배치 및 중앙 정렬 (Flexbox) */
   display: flex;
   flex-direction: row; 
   align-items: center; 
@@ -31,9 +31,9 @@
   min-height: 134px; 
 }
 
-/* =========================================
-   2. 로그인/회원가입 버튼 (우측 상단)
-========================================= */
+/* =============================================================================
+   [2] 로그인/회원가입 버튼 (우측 상단)
+   ============================================================================= */
 .auth-buttons {
   position: absolute;
   right: 60px; 
@@ -66,6 +66,7 @@
   border-radius: 30px;
 }
 
+/* 호버 효과 */
 .auth-btn:hover, .signup-btn:hover {
   transform: scale(1.05);
   color: #FF7043;
@@ -74,13 +75,13 @@
   color: #FFF9F0 !important;
 }
 
-/* =========================================
-   3. 로고 영역 (나무 간판) - ⭐️ 왼쪽 고정
-========================================= */
+/* =============================================================================
+   [3] 로고 영역 (나무 간판) - 왼쪽 고정
+   ============================================================================= */
 .logo-area {
-  /* ⭐️ 절대 위치로 변경하여 왼쪽 구석에 고정 */
+  /* 절대 위치로 왼쪽 구석에 고정 */
   position: absolute;
-  left: -75px; /* 왼쪽 여백 */
+  left: -75px; /* 왼쪽 여백 조절 */
   top: 50%;
   transform: translateY(-50%); 
   
@@ -93,7 +94,7 @@
 
 .wood-logo-wrapper {
   position: relative;
-  width: 330px; /* 로고 크기 적절히 조절 (왼쪽에 어울리게) */
+  width: 330px; /* 로고 크기 */
   height: auto;
   display: flex;
   justify-content: center;
@@ -102,7 +103,7 @@
 }
 
 .wood-logo-wrapper:hover {
-  transform: rotate(-2deg) scale(1.05);
+  transform: rotate(-2deg) scale(1.05); /* 마우스 올리면 살짝 기울며 커짐 */
 }
 
 .wood-sign-img {
@@ -120,24 +121,24 @@
   
   font-family: 'Fredoka One', cursive;
   font-size: 3.5rem;
-  color: #FFF9C4; /* 밝은 살구색/치즈색 */
+  color: #FFF9C4;
   letter-spacing: -2px;
   
-  /* 진한 테두리를 줘서 만화 같은 느낌 */
+  /* 만화 같은 진한 테두리 및 입체 그림자 */
   text-shadow: 
     -2px -2px 0 #5D4037,  
      2px -2px 0 #5D4037,
     -2px  2px 0 #5D4037,
      2px  2px 0 #5D4037,
-     4px 4px 0 rgba(0,0,0,0.2); /* 입체 그림자 */
+     4px 4px 0 rgba(0,0,0,0.2); 
 }
 
-/* =========================================
-   4. 네비게이션 메뉴 (Threebox) - ⭐️ 중앙 배치
-========================================= */
+/* =============================================================================
+   [4] 네비게이션 메뉴 (Threebox 쿠키 메뉴) - 중앙 배치
+   ============================================================================= */
 .nav-menu {
   position: relative;
-  margin-top: 70px;
+  margin-top: 70px; /* 로고와의 균형을 위한 상단 여백 */
   
   display: flex;
   align-items: center;
@@ -148,7 +149,7 @@
   z-index: 10;
 }
 
-/* Threebox 배경 이미지 */
+/* Threebox 배경 이미지 (나무 판자) */
 .nav-threebox {
   position: absolute;
   left: 50%;
@@ -166,7 +167,7 @@
   position: relative;
   display: flex;
   justify-content: center;
-  gap: 89px;
+  gap: 89px; /* 버튼 사이 간격 */
   width: 100%;
   margin: 0;
   padding: 0;
@@ -175,19 +176,16 @@
   align-items: center;
 }
 
-/* 개별 버튼 (LI) */
+/* 개별 버튼 (LI) - 쿠키 아이콘 */
 .cookie-btn {
-  position: relative; /* 텍스트 위치 기준점 */
+  position: relative; 
   display: flex;
   flex-direction: column; 
-  align-items: center;    
+  align-items: center;     
   cursor: pointer;
-  
-  /* ⭐️ 기존의 transform(둥둥 뜨기) 애니메이션 제거 */
-  transition: none; 
+  transition: none;
 }
 
-/* ⭐️ [효과 1] 마우스 올렸을 때 움직이지 않고 흰색 외곽선만 생기게 */
 .cookie-btn:hover {
   transform: none; /* 위치 이동 없음 */
 }
@@ -197,34 +195,56 @@
   height: auto;
   transform: translateY(-3px); 
   filter: drop-shadow(0 2px 3px rgba(0,0,0,0.15));
-  transition: filter 0.2s ease; /* 부드러운 효과 */
+  transition: filter 0.2s ease;
 }
 
-/* 마우스 올리면 흰색 그림자를 진하게 줘서 외곽선처럼 보이게 함 */
+/* 마우스 올리면 흰색 외곽선(그림자 효과) */
 .cookie-btn:hover img {
   filter: drop-shadow(0 0 3px #FFFFFF) drop-shadow(0 0 5px #FFFFFF);
 }
 
-/* ⭐️ [효과 2] 마우스 올렸을 때 뜨는 설명(이름) 텍스트 */
-/* 주의: .compact(슬림 모드)가 아닐 때만 적용 */
+/* -----------------------------------------------------------------------------
+   [4-1] 개별 쿠키 아이콘 미세 조정
+   ----------------------------------------------------------------------------- */
+/* 첫 번째 버튼 (업로드) */
+.nav-menu ul li:nth-child(1) img {
+  width: 70px;
+  transform: translateY(-3px); 
+}
+
+/* 두 번째 버튼 (샵) */
+.nav-menu ul li:nth-child(2) img {
+  width: 65px;
+  transform: translateY(-5px); 
+}
+
+/* 세 번째 버튼 (보관함) */
+.nav-menu ul li:nth-child(3) img {
+  width: 55px;
+  transform: translateY(-4px);
+}
+
+/* -----------------------------------------------------------------------------
+   [4-2] 마우스 호버 시 툴팁(말풍선) 효과
+   주의: .compact(슬림 모드)가 아닐 때만 적용
+   ----------------------------------------------------------------------------- */
 .site-header:not(.compact) .cookie-btn .cookie-text {
-  display: block; /* 존재하게 함 */
+  display: block; 
   position: absolute;
-  bottom: -35px; /* 쿠키 아래쪽에 위치 */
+  bottom: -35px; /* 쿠키 아래 위치 */
   left: 50%;
-  transform: translateX(-50%); /* 정가운데 정렬 */
+  transform: translateX(-50%);
   
-  /* 텍스트 스타일 */
-  background-color: rgba(255, 255, 255, 0.9); /* 반투명 흰색 말풍선 배경 */
+  background-color: rgba(255, 255, 255, 0.9);
   padding: 8px 16px;
   border-radius: 20px;
   font-size: 1rem;
   color: #5D4037;
   font-weight: bold;
-  white-space: nowrap; /* 줄바꿈 방지 */
+  white-space: nowrap;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 
-  /* 처음에 숨기기 */
+  /* 초기 상태: 숨김 */
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s ease, transform 0.3s ease;
@@ -234,119 +254,114 @@
 .site-header:not(.compact) .cookie-btn:hover .cookie-text {
   opacity: 1;
   visibility: visible;
-  bottom: -40px; /* 살짝 내려오면서 등장하는 효과 (선택사항) */
+  bottom: -40px; 
 }
 
 
-/* =========================================
-   5. 슬림 모드 (Compact - 에디터/보관함/비밀번호재설정 페이지)
-   ⭐️ 홈 화면 스타일(높이, 마진 등)을 여기서 강제로 끄는 것이 핵심입니다.
-========================================= */
+/* =============================================================================
+   [5] 슬림 모드 (Compact) - 에디터/보관함 등 서브 페이지용
+   ⭐️ 홈 화면 스타일(높이, 마진, 아이콘)을 강제로 끄고 텍스트 메뉴로 전환
+   ============================================================================= */
 .site-header.compact {
-    padding: 0; /* 상하 패딩 제거 */
-    background-color: rgba(255, 249, 240, 0.98);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    border-bottom: 1px solid rgba(0,0,0,0.05);
+  padding: 0; 
+  background-color: rgba(255, 249, 240, 0.98);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  border-bottom: 1px solid rgba(0,0,0,0.05);
 }
 
 .site-header.compact .header-container {
-    /* ⭐️ 홈 화면용 높이(134px) 무시하고 슬림하게 재설정 */
-    min-height: 90px; 
-    height: 60px;
-    
-    /* 요소 배치: 양옆으로 벌리기 (왼쪽 로고, 오른쪽 메뉴) */
-    justify-content: space-between; 
-    padding: 0 40px;
-    max-width: 100%;
+  min-height: 90px; 
+  height: 60px;
+  justify-content: space-between; /* 양옆 배치 */
+  padding: 0 40px;
+  max-width: 100%;
 }
 
-/* 슬림 모드 로고 */
+/* 슬림 모드 - 로고 스타일 재정의 */
 .site-header.compact .logo-area {
-    /* ⭐️ 홈 화면용 절대위치(absolute) 무시 */
-    position: static; 
-    transform: none;
-    margin: 0;
-    left: auto;
-    top: auto;
-    
-    /* 로고 영역 크기 잡기 */
-    display: flex;
-    align-items: center;
+  position: static; /* 절대 위치 해제 */
+  transform: none;
+  margin: 0;
+  left: auto;
+  top: auto;
+  display: flex;
+  align-items: center;
 }
 
 .site-header.compact .box-logo {
-    height: 55px; /* 로고 크기 적당히 */
-    width: auto;
+  height: 55px;
+  width: auto;
 }
 
-/* 슬림 모드 메뉴 */
+/* 슬림 모드 - 메뉴 스타일 재정의 */
 .site-header.compact .nav-menu {
-    /* ⭐️ 홈 화면용 마진(70px) 제거 */
-    margin-top: 0; 
-    width: auto;
-    height: 100%;
-    
-    /* 메뉴 가로 정렬 */
-    display: flex;
-    align-items: center;
-    margin-right: 1350px;
+  margin-top: 0; 
+  width: auto;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  margin-right: 1350px; /* 우측 여백 확보 */
 }
 
 .site-header.compact .nav-threebox {
-    display: none; /* 나무 박스 배경 숨김 */
+  display: none; /* 나무 판자 배경 숨김 */
 }
 
 .site-header.compact .nav-menu ul {
-    gap: 60px; /* 메뉴 간격 좁히기 */
-    padding: 0;
-    margin: 0;
-    display: flex;
-    align-items: center;
+  gap: 60px; 
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
 }
 
-/* 쿠키 아이콘 숨기고 텍스트만 보이기 */
+/* 슬림 모드 - 쿠키 아이콘 숨기고 텍스트만 표시 */
 .site-header.compact .cookie-btn img {
-    display: none; 
+  display: none; 
 }
 
 .site-header.compact .cookie-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: auto;
-    transform: none !important; /* 둥둥 뜨는 애니메이션 끄기 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: auto;
+  transform: none !important;
 }
 
 .site-header.compact .cookie-btn .cookie-text {
-    display: block; /* 텍스트 보이기 */
-    font-family: 'Jua', sans-serif;
-    font-size: 1.3rem;
-    color: #5D4037;
-    background: none;
-    border: none;
-    box-shadow: none;
-    padding: 0;
-    margin: 0;
-    cursor: pointer;
-    transition: color 0.2s ease;
+  display: block; 
+  font-family: 'Jua', sans-serif;
+  font-size: 1.3rem;
+  color: #5D4037;
+  background: none;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  
+  /* 툴팁 속성 제거 */
+  position: static;
+  opacity: 1;
+  visibility: visible;
+  transform: none;
 }
 
 .site-header.compact .cookie-btn:hover .cookie-text {
-    color: #FF7043; /* 호버 시 색상 변경 */
+  color: #FF7043;
 }
 
-/* 로그인 버튼 위치 재조정 (슬림 모드일 때) */
+/* 슬림 모드 - 로그인 버튼 위치 */
 .site-header.compact .auth-buttons {
-    /* 기존 절대 위치 무시하고 메뉴 옆으로 붙이거나, 
-       혹은 그대로 두고 싶다면 top 값만 조절 */
-    top: 50%;
-    transform: translateY(-50%);
-    right: 30px;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 30px;
 }
 
-/* =========================================
-   6. 투명 모드 (랜딩 페이지)
-========================================= */
+/* =============================================================================
+   [6] 투명 모드 (Transparent) - 랜딩 페이지용
+   ============================================================================= */
 .site-header.transparent {
   position: absolute;
   top: 0;
@@ -357,12 +372,12 @@
   z-index: 999;
 }
 
-/* =========================================
-   반응형 (모바일)
-========================================= */
+/* =============================================================================
+   [7] 반응형 스타일 (모바일 - 900px 이하)
+   ============================================================================= */
 @media (max-width: 900px) {
   .header-container {
-    flex-direction: column; /* 모바일은 세로 배치 */
+    flex-direction: column; /* 세로 배치 */
     height: auto;
     padding-bottom: 20px;
   }
@@ -384,23 +399,4 @@
     top: 20px;
     right: 20px;
   }
-}
-
-/* 1. 첫 번째 버튼 (업로드 - 곰돌이) */
-.nav-menu ul li:nth-child(1) img {
-  width: 70px; /* 원하는 크기로 조절 */
-  /* 높낮이 미세 조정이 필요하면 아래 숫자 변경 */
-  transform: translateY(-3px); 
-}
-
-/* 2. 두 번째 버튼 (샵 - 고양이) */
-.nav-menu ul li:nth-child(2) img {
-  width: 65px; /* 얘는 좀 더 크게! */
-  transform: translateY(-5px); /* 크니까 위치도 살짝 다르게 */
-}
-
-/* 3. 세 번째 버튼 (보관함 - 토끼) */
-.nav-menu ul li:nth-child(3) img {
-  width: 55px; /* 얘는 중간 크기 */
-  transform: translateY(-4px);
 }

@@ -6,54 +6,66 @@ import {
 import RefreshIcon from '@mui/icons-material/Refresh'; 
 import Viewer3D from "../components/Viewer3D"; 
 
-// === 상단 헬퍼 컴포넌트들 (변경 없음) ===
+// =============================================================================
+// [1] 헬퍼 컴포넌트 (입력 컨트롤)
+// ⭐️ [수정됨] 불필요한 onFocus Props 제거
+// =============================================================================
+
 const DualInputControl = ({ 
-  label, leftLabel, leftVal, setLeft, rightLabel, rightVal, setRight, onKeyDown, onLeftFocus, onRightFocus
+  label, leftLabel, leftVal, setLeft, rightLabel, rightVal, setRight, onKeyDown
 }: any) => (
   <Box sx={{ mb: 2 }}>
     <Typography gutterBottom fontWeight={600} fontSize="1.0rem" sx={{ mb: 1 }}>{label}</Typography>
     <Stack direction="row" spacing={1.5}>
       <Box sx={{ bgcolor: "#f5f5f5", borderRadius: 2, p: 1.5, flex: 1 }}>
         <Typography variant="caption" color="text.secondary" display="block" sx={{ mb: 0.5 }}>{leftLabel}</Typography>
-        <InputBase value={leftVal} onChange={(e) => setLeft(e.target.value)} onKeyDown={onKeyDown} onFocus={onLeftFocus} type="number" fullWidth sx={{ fontSize: "1.2rem", fontWeight: "bold", color: "#333" }} />
+        <InputBase value={leftVal} onChange={(e) => setLeft(e.target.value)} onKeyDown={onKeyDown} type="number" fullWidth sx={{ fontSize: "1.2rem", fontWeight: "bold", color: "#333" }} />
       </Box>
       <Box sx={{ bgcolor: "#f5f5f5", borderRadius: 2, p: 1.5, flex: 1 }}>
         <Typography variant="caption" color="text.secondary" display="block" sx={{ mb: 0.5 }}>{rightLabel}</Typography>
-        <InputBase value={rightVal} onChange={(e) => setRight(e.target.value)} onKeyDown={onKeyDown} onFocus={onRightFocus} type="number" fullWidth sx={{ fontSize: "1.2rem", fontWeight: "bold", color: "#333" }} />
+        <InputBase value={rightVal} onChange={(e) => setRight(e.target.value)} onKeyDown={onKeyDown} type="number" fullWidth sx={{ fontSize: "1.2rem", fontWeight: "bold", color: "#333" }} />
       </Box>
     </Stack>
   </Box>
 );
 
-const SingleInputControl = ({ label, subLabel, value, setValue, onKeyDown, onFocus
+const SingleInputControl = ({ label, subLabel, value, setValue, onKeyDown
  }: any) => (
   <Box sx={{ mb: 2 }}>
     <Typography gutterBottom fontWeight={600} fontSize="0.9rem" sx={{ mb: 1 }}>{label}</Typography>
     <Box sx={{ bgcolor: "#f5f5f5", borderRadius: 2, p: 1.5 }}>
       <Typography variant="caption" color="text.secondary" display="block" sx={{ mb: 0.5 }}>{subLabel}</Typography>
-      <InputBase value={value} onChange={(e) => setValue(e.target.value)} onKeyDown={onKeyDown} onFocus={onFocus} type="number" fullWidth sx={{ fontSize: "1.2rem", fontWeight: "bold", color: "#333" }} />
+      <InputBase value={value} onChange={(e) => setValue(e.target.value)} onKeyDown={onKeyDown} type="number" fullWidth sx={{ fontSize: "1.2rem", fontWeight: "bold", color: "#333" }} />
     </Box>
   </Box>
 );
 
+// =============================================================================
+// [2] Props 인터페이스
+// =============================================================================
 interface EditorPageProps {
   file: File | null;
   onFileChange?: (file: File) => void;
 }
 
-// === 메인 컴포넌트 ===
+// =============================================================================
+// [3] 메인 컴포넌트: EditorPage
+// =============================================================================
 export default function EditorPage({ file, onFileChange }: EditorPageProps) {
-  // === 상태 관리 ===
+  
+  // ---------------------------------------------------------------------------
+  // [3-1] 상태 관리 (State)
+  // ---------------------------------------------------------------------------
+  
   const [stlUrl, setStlUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  // [추가됨] 로딩 문구를 동적으로 변경하기 위한 상태
   const [loadingText, setLoadingText] = useState("업데이트 중...");
-
-  const [type, setType] = useState<string>("both");
+  
+  const [type, setType] = useState<string>("both"); 
   const [size, setSize] = useState<number | string>(90);
   const [minThickness, setMinThickness] = useState<number | string>(0.6);
 
-  // 커터
+  // 커터(Cutter) 파라미터
   const [bladeThick, setBladeThick] = useState<number | string>(0.7);
   const [bladeDepth, setBladeDepth] = useState<number | string>(20.0);
   const [supportThick, setSupportThick] = useState<number | string>(1.3);
@@ -61,21 +73,21 @@ export default function EditorPage({ file, onFileChange }: EditorPageProps) {
   const [baseThick, setBaseThick] = useState<number | string>(2.0);
   const [baseDepth, setBaseDepth] = useState<number | string>(2.0);
 
-  // 간격
+  // 간격(Gap) 파라미터
   const [gap, setGap] = useState<number | string>(1.0);
 
-  // 스탬프
+  // 스탬프(Stamp) 파라미터
   const [stampProtrusion, setStampProtrusion] = useState<number | string>(5.0);
   const [stampDepression, setStampDepression] = useState<number | string>(2.0);
   const [wallOffset, setWallOffset] = useState<number | string>(2.0);
   const [wallExtrude, setWallExtrude] = useState<number | string>(2.0);
 
-  const [focusedParam, setFocusedParam] = useState<string | null>(null);
-
-  // 이전 파일명을 기억하기 위한 Ref
   const prevFileRef = useRef<File | null>(null);
 
-  // === 이벤트 핸들러들 ===
+  // ---------------------------------------------------------------------------
+  // [3-2] 이벤트 핸들러
+  // ---------------------------------------------------------------------------
+  
   const handleEnterMove = (e: React.KeyboardEvent<any>) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -95,6 +107,7 @@ export default function EditorPage({ file, onFileChange }: EditorPageProps) {
   const handleSliderChange = (_: Event, val: number | number[]) => setMinThickness(val as number);
   const handleInputChange = (e: React.ChangeEvent<any>, setter: React.Dispatch<React.SetStateAction<number | string>>) => setter(e.target.value);
   const setVal = (setter: React.Dispatch<React.SetStateAction<number | string>>) => (val: string) => setter(val);
+  
   const getSafeNumber = (val: number | string, def: number) => { const n = Number(val); return isNaN(n) ? def : n; };
 
   const handleNewFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -103,16 +116,13 @@ export default function EditorPage({ file, onFileChange }: EditorPageProps) {
       onFileChange(selectedFile); 
     }
   };
-  
-  const handleFocus = (paramName: string) => () => {
-    setFocusedParam(paramName);
-  };
 
-  // 모델 생성 함수
+  // ---------------------------------------------------------------------------
+  // [3-3] API 통신 로직 (모델 생성)
+  // ---------------------------------------------------------------------------
   const generateModel = useCallback(async (isDownload: boolean = false) => {
     if (!file) return;
 
-    // 미리보기(다운로드X)일 때만 로딩 표시
     if (!isDownload) setIsLoading(true);
 
     try {
@@ -121,7 +131,6 @@ export default function EditorPage({ file, onFileChange }: EditorPageProps) {
       if (type === 'stamp') outputOption = 3;
 
       const ringConfig = [];
-
       if (type !== 'cutter') {
         ringConfig.push({ thickness: Number(wallOffset), height: Number(wallExtrude) });
       }
@@ -180,55 +189,40 @@ export default function EditorPage({ file, onFileChange }: EditorPageProps) {
     }
   }, [file, type, size, minThickness, bladeThick, bladeDepth, supportThick, supportDepth, baseThick, baseDepth, gap, stampProtrusion, stampDepression, wallOffset, wallExtrude]);
 
-
-  // ⭐ 파일이 '새로' 바뀌었을 때만 자동 실행 (초기 로딩 메시지 설정)
   useEffect(() => {
     if (file && prevFileRef.current !== file) {
       prevFileRef.current = file;
-      // [수정됨] 파일 변경 시에는 긴 로딩 메시지 설정
       setLoadingText("모델 생성 중입니다...\n약 1분만 기다려주세요!🍪");
       generateModel(false); 
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [file]); 
 
 
+  // ---------------------------------------------------------------------------
+  // [3-4] UI 렌더링
+  // ---------------------------------------------------------------------------
   return (
     <Box sx={{ display: "flex", height: "calc(100vh - 72px)", bgcolor: "#f5f5f5" }}>
       
-      {/* 3D 뷰어 */}
+      {/* (A) 왼쪽: 3D 뷰어 영역 */}
       <Box sx={{ flex: 1, position: "relative", bgcolor: "#e0e0e0" }}>
+        
         <Viewer3D 
           size={getSafeNumber(size, 90)} 
-          thickness={getSafeNumber(minThickness, 0.6)} 
           height={getSafeNumber(bladeDepth, 12)}
-          type={type}
-          focusedParam={focusedParam}
           stlUrl={stlUrl} 
-          
-          bladeThick={getSafeNumber(bladeThick, 0.7)}
-          bladeDepth={getSafeNumber(bladeDepth, 20.0)}
-          supportThick={getSafeNumber(supportThick, 1.3)}
-          supportDepth={getSafeNumber(supportDepth, 10.0)}
-          baseThick={getSafeNumber(baseThick, 2.0)}
-          baseDepth={getSafeNumber(baseDepth, 2.0)}
-          gap={getSafeNumber(gap, 1.0)}
-          wallOffset={getSafeNumber(wallOffset, 2.0)}
-          wallExtrude={getSafeNumber(wallExtrude, 2.0)}
         />
         
-        {/* [수정됨] 로딩 오버레이: zIndex 상향 및 Blur 효과 추가, 메시지 동적화 */}
         {isLoading && (
           <Box sx={{ 
             position: "absolute", top: 0, left: 0, right: 0, bottom: 0, 
             display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
             bgcolor: "rgba(255,255,255,0.7)", 
-            backdropFilter: "blur(5px)", // [추가] 블러 효과
-            zIndex: 200 // [수정] Viewer3D의 가이드(zIndex 100)보다 높게 설정하여 덮어씀
+            backdropFilter: "blur(5px)", 
+            zIndex: 200 
           }}>
             <CircularProgress size={60} sx={{ color: "#ff8fa3", mb: 2 }} />
             <Typography variant="h6" fontWeight="bold" color="text.secondary" sx={{ whiteSpace: 'pre-line', textAlign: 'center' }}>
-              {/* 동적 메시지 표시 (줄바꿈 지원) */}
               {loadingText}
             </Typography>
           </Box>
@@ -236,16 +230,15 @@ export default function EditorPage({ file, onFileChange }: EditorPageProps) {
 
         {file && (
           <Paper sx={{ position: "absolute", top: 16, left: 16, p: 1, px: 2, bgcolor: "rgba(255,255,255,0.8)" }}>
-             현재 편집 중: {file.name}
+              현재 편집 중: {file.name}
           </Paper>
         )}
       </Box>
 
-      {/* 컨트롤 패널 */}
+      {/* (B) 오른쪽: 컨트롤 패널 영역 */}
       <Paper elevation={4} sx={{ width: 360, bgcolor: "white", zIndex: 10, display: "flex", flexDirection: "column", p: 3, overflowY: "auto" }}>
         
-        {/* ... (중간 입력 컨트롤들은 기존과 동일) ... */}
-        
+        {/* B-1. 기본 설정 */}
         <Box sx={{ mb: 4 }}>
           <Typography variant="h6" fontWeight="bold" fontSize="1.4rem" sx={{ mb: 2 }}>기본 설정</Typography>
           <ToggleButtonGroup value={type} exclusive onChange={handleTypeChange} fullWidth size="small" sx={{ mb: 3 }}>
@@ -280,6 +273,7 @@ export default function EditorPage({ file, onFileChange }: EditorPageProps) {
 
         <Divider sx={{ mb: 3 }} />
 
+        {/* B-2. 스탬프 설정 */}
         {(type === 'both' || type === 'stamp') && (
           <Box sx={{ mb: 3 }}>
              <Typography variant="h5" fontWeight="bold" fontSize="1.4rem" sx={{ mb: 2, color: "#333" }}>스탬프</Typography>
@@ -296,48 +290,48 @@ export default function EditorPage({ file, onFileChange }: EditorPageProps) {
                 </Stack>
               </Stack>
             </Box>
+            
             <DualInputControl label="내벽" 
-              leftLabel="Offset (mm)" leftVal={wallOffset} setLeft={setVal(setWallOffset)} onLeftFocus={handleFocus('wallOffset')}
-              rightLabel="Extrude (mm)" rightVal={wallExtrude} setRight={setVal(setWallExtrude)} onRightFocus={handleFocus('wallExtrude')} onKeyDown={handleEnterMove} />
+              leftLabel="Offset (mm)" leftVal={wallOffset} setLeft={setVal(setWallOffset)} 
+              rightLabel="Extrude (mm)" rightVal={wallExtrude} setRight={setVal(setWallExtrude)} onKeyDown={handleEnterMove} />
           </Box>
         )}
 
+        {/* B-3. 간격 설정 */}
         {(type === 'both') && (
           <>
             <Divider sx={{ mb: 3 }} />
             <Box sx={{ mb: 4 }}>
               <Typography variant="h5" fontWeight="bold" fontSize="1.4rem" sx={{ mb: 2, color: "#333" }}>스탬프와 커터 사이 간격</Typography>
-              <SingleInputControl subLabel="Distance (mm)" value={gap} setValue={setVal(setGap)} onFocus={handleFocus('gap')} onKeyDown={handleEnterMove} />
+              <SingleInputControl subLabel="Distance (mm)" value={gap} setValue={setVal(setGap)} onKeyDown={handleEnterMove} />
             </Box>
             <Divider sx={{ mb: 3 }} />
           </>
         )}
 
+        {/* B-4. 커터 설정 */}
         {(type === 'both' || type === 'cutter') && (
           <Box sx={{ mb: 4 }}>
             <Typography variant="h5" fontWeight="bold" fontSize="1.4rem" sx={{ mb: 2, color: "#333" }}>커터</Typography>
+
             <DualInputControl label="칼날" 
-              leftLabel="Thickness (mm)" leftVal={bladeThick} setLeft={setVal(setBladeThick)} onLeftFocus={handleFocus('bladeThick')}
-              rightLabel="Depth (mm)" rightVal={bladeDepth} setRight={setVal(setBladeDepth)} onRightFocus={handleFocus('bladeDepth')} onKeyDown={handleEnterMove} />
+              leftLabel="Thickness (mm)" leftVal={bladeThick} setLeft={setVal(setBladeThick)} 
+              rightLabel="Depth (mm)" rightVal={bladeDepth} setRight={setVal(setBladeDepth)} onKeyDown={handleEnterMove} />
             <DualInputControl label="지지대" 
-              leftLabel="Thickness (mm)" leftVal={supportThick} setLeft={setVal(setSupportThick)} onLeftFocus={handleFocus('supportThick')}
-              rightLabel="Depth (mm)" rightVal={supportDepth} setRight={setVal(setSupportDepth)} onRightFocus={handleFocus('supportDepth')} onKeyDown={handleEnterMove} />
+              leftLabel="Thickness (mm)" leftVal={supportThick} setLeft={setVal(setSupportThick)} 
+              rightLabel="Depth (mm)" rightVal={supportDepth} setRight={setVal(setSupportDepth)} onKeyDown={handleEnterMove} />
             <DualInputControl label="바닥" 
-              leftLabel="Thickness (mm)" leftVal={baseThick} setLeft={setVal(setBaseThick)} onLeftFocus={handleFocus('baseThick')}
-              rightLabel="Depth (mm)" rightVal={baseDepth} setRight={setVal(setBaseDepth)} onRightFocus={handleFocus('baseDepth')} onKeyDown={handleEnterMove} />
+              leftLabel="Thickness (mm)" leftVal={baseThick} setLeft={setVal(setBaseThick)} 
+              rightLabel="Depth (mm)" rightVal={baseDepth} setRight={setVal(setBaseDepth)} onKeyDown={handleEnterMove} />
           </Box>
         )}
 
+        {/* B-5. 하단 버튼 영역 */}
         <Box sx={{ mt: "auto", pt: 2 }}>
-          {/* 설정 적용 버튼 */}
           <Button 
-            fullWidth 
-            variant="contained" 
-            color="primary"
-            size="large" 
+            fullWidth variant="contained" color="primary" size="large" 
             startIcon={<RefreshIcon />}
             onClick={() => {
-              // [수정됨] 버튼 클릭 시에는 짧은 메시지 설정
               setLoadingText("변경 사항 적용 중...");
               generateModel(false);
             }}
@@ -351,11 +345,8 @@ export default function EditorPage({ file, onFileChange }: EditorPageProps) {
             설정 적용 및 미리보기
           </Button>
 
-          {/* 다운로드 버튼 */}
           <Button 
-            fullWidth 
-            variant="contained" 
-            size="large" 
+            fullWidth variant="contained" size="large" 
             onClick={() => generateModel(true)} 
             disabled={isLoading}
             sx={{ 
@@ -368,28 +359,16 @@ export default function EditorPage({ file, onFileChange }: EditorPageProps) {
           </Button>
 
           <Button 
-            component="label" 
-            fullWidth 
-            variant="outlined" 
-            size="large"
+            component="label" fullWidth variant="outlined" size="large"
             disabled={isLoading} 
             sx={{ 
-                py: 1.5, 
-                fontWeight: "bold", 
-                color: "#8D6E63", 
-                borderColor: "#8D6E63",
-                "&:hover": { 
-                  borderColor: "#5D4037", 
-                  color: "#5D4037", 
-                  bgcolor: "#FFF3E0" 
-                }
+                py: 1.5, fontWeight: "bold", color: "#8D6E63", borderColor: "#8D6E63",
+                "&:hover": { borderColor: "#5D4037", color: "#5D4037", bgcolor: "#FFF3E0" }
               }}
           >
             새로운 파일 업로드
             <input 
-              type="file" 
-              hidden 
-              accept=".png,.jpg,.jpeg,.svg" 
+              type="file" hidden accept=".png" 
               onChange={handleNewFileUpload} 
             />
           </Button>
