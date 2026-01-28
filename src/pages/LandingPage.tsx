@@ -1,13 +1,19 @@
-// src/pages/LandingPage.tsx
-import { Box, Container } from "@mui/material";
+import { useState } from "react";
+import { Box, Container} from "@mui/material";
 import OvenUploader from "../components/OvenUploader";
-import "./LandingPage.css"; // ⭐️ CSS 파일 연결 필수
+import RecipeGuide from "../components/RecipeGuide";
+import "./LandingPage.css";
+
 
 interface LandingPageProps {
   onStart: (file: File) => void;
 }
 
 export default function LandingPage({ onStart }: LandingPageProps) {
+
+  const [openGuide, setOpenGuide] = useState(false);
+  const handleOpenGuide = () => setOpenGuide(true);
+  const handleCloseGuide = () => setOpenGuide(false);
 
   const handleOvenFileSelect = (file: File) => {
     onStart(file);
@@ -33,7 +39,15 @@ export default function LandingPage({ onStart }: LandingPageProps) {
         className="table-deco deco-cutter" 
       />
 
-      {/* ✅ 3. 오븐 및 컨텐츠 (가장 위에 올라옴) */}
+      {/* 벽에 붙은 레시피 메모 */}
+      <div className="wall-recipe-note" onClick={handleOpenGuide}>
+        <div className="tape"></div> {/* 마스킹 테이프 */}
+        <div className="note-content">
+          <h4>SECRET<br/>RECIPE</h4>
+          <span>눌러보세요!</span>
+        </div>
+      </div>
+
       <Container maxWidth="sm" className="content-container">
         <Box sx={{ textAlign: "center", width: "100%" }}>
           <Box sx={{ display: 'flex', justifyContent: 'center' }}>
@@ -41,6 +55,9 @@ export default function LandingPage({ onStart }: LandingPageProps) {
           </Box>
         </Box>
       </Container>
+      
+      {/* ✅ 여기에 한 줄만 넣으면 끝! */}
+      <RecipeGuide open={openGuide} onClose={handleCloseGuide} />
       
     </div>
   );

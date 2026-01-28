@@ -135,7 +135,7 @@ export default function App() {
 
   return (
     <>
-      <input type="file" hidden ref={headerFileInputRef} accept="image/*" onChange={handleHeaderFileChange} />
+      <input type="file" hidden ref={headerFileInputRef} accept=".png" onChange={handleHeaderFileChange} />
       <Header 
         onLoginClick={() => setIsLoginOpen(true)} 
         onSignUpClick={() => setIsSignUpOpen(true)}

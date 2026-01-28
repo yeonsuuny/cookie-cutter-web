@@ -24,6 +24,11 @@ export default function OvenUploader({ onFileSelected }: OvenUploaderProps) {
   
   // [3-1] 파일 읽기 및 미리보기 생성 (공통 함수)
   const handleFile = (file: File) => {
+    // PNG 파일 아니면 처리하지 않고 종료
+    if (file.type !== "image/png" && !file.name.toLowerCase().endsWith(".png")) {
+        return;
+    }
+
     const reader = new FileReader();
     
     // 파일 읽기가 완료되면 미리보기 상태 업데이트
@@ -53,15 +58,36 @@ export default function OvenUploader({ onFileSelected }: OvenUploaderProps) {
   // ===========================================================================
   const handleDragEnter = () => setIsDragging(true);  // 파일이 영역 안에 들어옴
   const handleDragLeave = () => setIsDragging(false); // 파일이 영역 밖으로 나감
+
+  // 드래그 오버 시: PNG가 아니면 '금지' 커서 보여주기
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault(); // 기본 동작 방지 (필수)
+    
+    // 드래그 중인 파일의 타입을 확인
+    const item = e.dataTransfer.items?.[0];
+    if (item && item.type !== "image/png") {
+        // PNG가 아니면 드롭 금지 표시 (커서가 금지 모양으로 변함)
+        e.dataTransfer.dropEffect = "none";
+    } else {
+        // PNG면 복사 표시 (커서가 + 모양 등으로 변함)
+        e.dataTransfer.dropEffect = "copy";
+    }
+  };
   
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();  // 브라우저 기본 동작(파일 열기) 방지
     e.stopPropagation(); // 이벤트 전파 중단
     setIsDragging(false); // 드래그 상태 해제
+
+    const droppedFile = e.dataTransfer.files?.[0];
     
-    // 드롭된 파일이 있으면 처리
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      handleFile(e.dataTransfer.files[0]);
+    // 파일이 있고, PNG인지 검사
+    if (droppedFile) {
+        if (droppedFile.type !== "image/png" && !droppedFile.name.toLowerCase().endsWith(".png")) {
+            return;
+        }
+        // 통과하면 파일 처리
+        handleFile(droppedFile);
     }
   };
 
@@ -73,7 +99,7 @@ export default function OvenUploader({ onFileSelected }: OvenUploaderProps) {
       className={`oven-wrapper ${isDragging ? 'dragging' : ''}`}
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
-      onDragOver={(e) => e.preventDefault()} // 드롭 허용을 위해 필수
+      onDragOver={handleDragOver}
       onDrop={handleDrop}
     >
       {/* [5-1] 연기 효과 (장식용) */}
@@ -111,7 +137,7 @@ export default function OvenUploader({ onFileSelected }: OvenUploaderProps) {
       {/* 오븐 전체를 덮고 있어서 어디를 클릭해도 파일 선택 창이 뜸 */}
       <input 
         type="file" 
-        accept="image/*" 
+        accept=".png" 
         className="hidden-file-input"
         onChange={handleChange}
       />
