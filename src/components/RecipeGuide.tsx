@@ -1,7 +1,6 @@
 // src/components/RecipeGuide.tsx
 import { 
-  Dialog, 
-  DialogContent, 
+  Dialog,
   IconButton, 
   Typography, 
   Box,
