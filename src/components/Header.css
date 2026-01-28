@@ -36,11 +36,11 @@
 ========================================= */
 .auth-buttons {
   position: absolute;
-  right: 65px; 
+  right: 60px; 
   top: 40px;
   transform: none;
   display: flex;
-  gap: 15px; 
+  gap: 20px; 
   z-index: 100;
   align-items: center; 
 }
@@ -49,7 +49,7 @@
   background: none;
   border: none;
   font-family: 'Jua', sans-serif;
-  font-size: 1.1rem;
+  font-size: 1.3rem;
   color: #8D6E63;     
   cursor: pointer;
   padding: 5px;
@@ -114,17 +114,22 @@
 
 .wood-sign-text {
   position: absolute;
-  top: 62%;  
+  top: 63%;  
   left: 50%;
   transform: translate(-50%, -50%);
   
   font-family: 'Fredoka One', cursive;
-  font-size: 3.3rem; /* 폰트 크기 조절 */
-  color: #3E2723;
-  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.4); 
-  width: 100%;
-  text-align: center;
-  letter-spacing: 1px;
+  font-size: 3.5rem;
+  color: #FFF9C4; /* 밝은 살구색/치즈색 */
+  letter-spacing: -2px;
+  
+  /* 진한 테두리를 줘서 만화 같은 느낌 */
+  text-shadow: 
+    -2px -2px 0 #5D4037,  
+     2px -2px 0 #5D4037,
+    -2px  2px 0 #5D4037,
+     2px  2px 0 #5D4037,
+     4px 4px 0 rgba(0,0,0,0.2); /* 입체 그림자 */
 }
 
 /* =========================================
@@ -138,7 +143,7 @@
   align-items: center;
   justify-content: center;
   
-  width: 500px; /* Threebox 이미지 너비와 비슷하게 */
+  width: 500px; 
   height: 80px;
   z-index: 10;
 }
@@ -150,10 +155,9 @@
   top: 50%;
   transform: translate(-50%, -50%);
   width: 100%; 
-  height: auto; /* 비율 유지 */
+  height: auto; 
   z-index: 0;
   pointer-events: none;
-  /* 살짝 그림자 */
   filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
 }
 
@@ -173,30 +177,64 @@
 
 /* 개별 버튼 (LI) */
 .cookie-btn {
+  position: relative; /* 텍스트 위치 기준점 */
   display: flex;
   flex-direction: column; 
   align-items: center;    
   cursor: pointer;
-  transition: transform 0.2s ease;
-}
-
-.cookie-btn:hover {
-  transform: translateY(-5px); /* 호버 시 위로 둥둥 */
-}
-
-/* 버튼 아이콘 이미지 */
-.cookie-btn img {
-  width: 75px; /* 아이콘 크기 */
-  height: auto;
   
-  /* ⭐️ 위치 미세 조정: Threebox 중앙에 오도록 */
+  /* ⭐️ 기존의 transform(둥둥 뜨기) 애니메이션 제거 */
+  transition: none; 
+}
+
+/* ⭐️ [효과 1] 마우스 올렸을 때 움직이지 않고 흰색 외곽선만 생기게 */
+.cookie-btn:hover {
+  transform: none; /* 위치 이동 없음 */
+}
+
+.cookie-btn img {
+  width: 75px; 
+  height: auto;
   transform: translateY(-3px); 
   filter: drop-shadow(0 2px 3px rgba(0,0,0,0.15));
+  transition: filter 0.2s ease; /* 부드러운 효과 */
 }
 
-/* 텍스트 숨김 (요청사항) */
-.cookie-btn .cookie-text {
-  display: none;
+/* 마우스 올리면 흰색 그림자를 진하게 줘서 외곽선처럼 보이게 함 */
+.cookie-btn:hover img {
+  filter: drop-shadow(0 0 3px #FFFFFF) drop-shadow(0 0 5px #FFFFFF);
+}
+
+/* ⭐️ [효과 2] 마우스 올렸을 때 뜨는 설명(이름) 텍스트 */
+/* 주의: .compact(슬림 모드)가 아닐 때만 적용 */
+.site-header:not(.compact) .cookie-btn .cookie-text {
+  display: block; /* 존재하게 함 */
+  position: absolute;
+  bottom: -35px; /* 쿠키 아래쪽에 위치 */
+  left: 50%;
+  transform: translateX(-50%); /* 정가운데 정렬 */
+  
+  /* 텍스트 스타일 */
+  background-color: rgba(255, 255, 255, 0.9); /* 반투명 흰색 말풍선 배경 */
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 1rem;
+  color: #5D4037;
+  font-weight: bold;
+  white-space: nowrap; /* 줄바꿈 방지 */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+  /* 처음에 숨기기 */
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* 마우스 올리면 텍스트 등장 */
+.site-header:not(.compact) .cookie-btn:hover .cookie-text {
+  opacity: 1;
+  visibility: visible;
+  bottom: -40px; /* 살짝 내려오면서 등장하는 효과 (선택사항) */
 }
 
 

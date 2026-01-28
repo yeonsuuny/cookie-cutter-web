@@ -40,31 +40,6 @@
 }
 
 /* =========================================
-   🍪 빼꼼 쿠키 애니메이션 (Peeking Cookie)
-========================================= */
-.peeking-cookie {
-  position: absolute;
-  bottom: -10px; /* 화면 맨 아래 */
-  left: 5%;      /* 왼쪽 구석 */
-  width: 120px;
-  z-index: 5;    /* 배경 바로 위 */
-  animation: peek-a-boo 5s infinite ease-in-out;
-}
-
-.peeking-cookie img {
-  width: 100%;
-  transform: rotate(-10deg); /* 살짝 기울이기 */
-}
-
-@keyframes peek-a-boo {
-  0%, 100% { transform: translateY(100%); } /* 숨어있음 */
-  30% { transform: translateY(100%); }      /* 대기 */
-  40% { transform: translateY(20%); }       /* 빼꼼 올라옴 */
-  60% { transform: translateY(20%); }       /* 눈치 봄 */
-  70% { transform: translateY(100%); }      /* 다시 숨음 */
-}
-
-/* =========================================
    🍪 테이블 위 소품 배치
 ========================================= */
 
