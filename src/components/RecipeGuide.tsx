@@ -1,116 +1,136 @@
-// src/components/RecipeGuide.tsx
-import { 
-  Dialog,
-  IconButton, 
-  Typography, 
-  Box,
-  Stack
-} from "@mui/material";
+import { Dialog, IconButton, Typography, Box, Stack } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
-// 아이콘들이 없으면 npm install @mui/icons-material 필요 (이미 하셨을 거예요)
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import CookieIcon from '@mui/icons-material/Cookie';
-import DownloadIcon from '@mui/icons-material/Download';
 
 interface RecipeGuideProps {
   open: boolean;
   onClose: () => void;
 }
 
+const handFont = {
+  fontFamily: "'Jua', sans-serif", 
+  color: '#5d4037', 
+};
+
 export default function RecipeGuide({ open, onClose }: RecipeGuideProps) {
+  
+  // 📝 단계별 데이터 (순서 수정됨!)
+  const steps = [
+    {
+      id: 1,
+      title: "1. 업로드",
+      desc: <>원하는 이미지 파일을 업로드 합니다<br />PNG 파일만 가능해요!</>,
+      imgSrc: "/judang_upload.png",
+      imgWidth: '155px' 
+    },
+    {
+      id: 2,
+      title: "2. 커스텀",
+      desc: "사이즈를 원하는대로 수정합니다",
+      imgSrc: "/judang_settings.png",
+      imgWidth: '145px' 
+    },
+    {
+      id: 3,
+      title: "3. 다운로드",
+      desc: "수정한 STL 파일을 다운받습니다",
+      imgSrc: "/judang_download.png",
+      imgWidth: '145px' 
+    },
+    {
+      // 👇 여기가 마지막 단계가 됩니다!
+      id: 4,
+      title: "4. 굽기", 
+      desc: "완성된 쿠키 커터로 쿠키를 구워봐요!", // 문구는 원하시는 대로 수정하세요!
+      imgSrc: "/judang_cooking.png",
+      imgWidth: '150px' 
+    }
+  ];
+
   return (
-    <Dialog 
-      open={open} 
+    <Dialog
+      open={open}
       onClose={onClose}
-      maxWidth="xs" // 너비 적당하게
+      maxWidth={false}
       PaperProps={{
         style: {
-          backgroundColor: '#fffdf0', // 따뜻한 미색 종이
-          borderRadius: '20px',
-          padding: '10px', // 테두리 공간 확보
-          boxShadow: '0 10px 25px rgba(0,0,0,0.2)' // 붕 뜬 그림자
+          backgroundImage: `url("/popup2.png")`, 
+          backgroundSize: '100% 100%', 
+          backgroundRepeat: 'no-repeat',
+          backgroundColor: 'transparent',
+          boxShadow: 'none',
+          
+          width: '600px',
+          height: '800px',
+          padding: '80px 40px 40px 40px',
+          boxSizing: 'border-box'
         }
       }}
     >
-      {/* 🧵 안쪽 점선 테두리 박스 (아까 그 디자인!) */}
-      <Box sx={{
-        border: '2px dashed #5d4037',
-        borderRadius: '15px',
-        padding: '20px',
-        textAlign: 'center',
-        position: 'relative'
-      }}>
+      <IconButton
+        onClick={onClose}
+        sx={{ position: 'absolute', top: '85px', right: '65px', color: '#8d6e63' }}
+      >
+        <CloseIcon />
+      </IconButton>
+
+      <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: '40px' }}>
         
-        {/* 닫기 버튼 (우측 상단) */}
-        <IconButton 
-          onClick={onClose} 
-          sx={{ 
-            position: 'absolute', 
-            top: 8, 
-            right: 8, 
-            color: '#8d6e63' 
-          }}
-        >
-          <CloseIcon />
-        </IconButton>
-
         {/* 제목 */}
-        <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#5d4037', mb: 1, mt: 1 }}>
-          🍪 Baking Guide
-        </Typography>
-        <Typography variant="body2" sx={{ color: '#8d6e63', mb: 4 }}>
-          나만의 쿠키 커터 굽는 법
+        <Typography variant="h5" sx={{ ...handFont, fontSize: '1.8rem', mb: 2, fontWeight: 'bold' }}>
+         3🍪LIGHT RECIPE
         </Typography>
 
-        {/* 내용: 단계별 설명 */}
-        <Stack spacing={3}>
-          
-          {/* Step 1 */}
-          <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'left' }}>
-            <Box sx={{ bgcolor: '#efebe9', p: 1.5, borderRadius: '50%', mr: 2 }}>
-              <CloudUploadIcon sx={{ color: '#5d4037' }} />
-            </Box>
-            <Box>
-              <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#5d4037' }}>
-                1. 반죽 넣기 (Upload)
-              </Typography>
-              <Typography variant="caption" sx={{ color: '#8d6e63' }}>
-                원하는 모양의 이미지를 오븐에 넣어주세요. 배경이 투명하면 더 좋아요!
-              </Typography>
-            </Box>
-          </Box>
+        {/* 리스트 (스크롤 가능) */}
+        <Box sx={{ 
+          width: '100%', 
+          maxWidth: '450px', 
+          flexGrow: 1, 
+          overflowY: 'auto',
+          paddingRight: '10px',
+          "&::-webkit-scrollbar": { width: "6px" },
+          "&::-webkit-scrollbar-thumb": { backgroundColor: "rgba(93, 64, 55, 0.3)", borderRadius: "3px" }
+        }}>
+          <Stack spacing={3} sx={{ width: '100%', maxWidth: '400px', transform: 'translate(28px)' }}>
+            {steps.map((step, index) => (
+              <Box 
+                key={step.id}
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  flexDirection: 'row', 
+        
+                  borderBottom: index === steps.length - 1 ? 'none' : '2px dashed rgba(93, 64, 55, 0.2)',
+        
+                  paddingBottom: '10px'
+                }}
+              >
+                {/* ✍️ 글씨 */}
+                <Box sx={{ textAlign: 'left', flex: 1 }}>
+                  <Typography variant="h6" sx={{ ...handFont, fontSize: '1.4rem' }}>
+                    {step.title}
+                  </Typography>
+                  <Typography variant="body1" sx={{ ...handFont, fontSize: '1.11rem', letterSpacing: '-0.5px', opacity: 0.8 }}>
+                    {step.desc}
+                  </Typography>
+                </Box>
 
-          {/* Step 2 */}
-          <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'left' }}>
-            <Box sx={{ bgcolor: '#efebe9', p: 1.5, borderRadius: '50%', mr: 2 }}>
-              <CookieIcon sx={{ color: '#5d4037' }} />
-            </Box>
-            <Box>
-              <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#5d4037' }}>
-                2. 굽기 (Convert)
-              </Typography>
-              <Typography variant="caption" sx={{ color: '#8d6e63' }}>
-                오븐이 이미지를 3D 모델로 구워낼 때까지 잠시만 기다려주세요.
-              </Typography>
-            </Box>
-          </Box>
-
-          {/* Step 3 */}
-          <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'left' }}>
-            <Box sx={{ bgcolor: '#efebe9', p: 1.5, borderRadius: '50%', mr: 2 }}>
-              <DownloadIcon sx={{ color: '#5d4037' }} />
-            </Box>
-            <Box>
-              <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#5d4037' }}>
-                3. 완성 (Download)
-              </Typography>
-              <Typography variant="caption" sx={{ color: '#8d6e63' }}>
-                따끈한 STL 파일을 받아 3D 프린터로 출력하면 끝!
-              </Typography>
-            </Box>
-          </Box>
-
-        </Stack>
+                {/* 🖼️ 그림 */}
+                <Box 
+                  component="img"
+                  src={step.imgSrc}
+                  alt={step.title}
+                  sx={{
+                    width: step.imgWidth, 
+                    height: 'auto',
+                    objectFit: 'contain',
+                    marginLeft: '15px' 
+                  }}
+                />
+              </Box>
+            ))}
+          </Stack>
+        </Box>
       </Box>
     </Dialog>
   );
