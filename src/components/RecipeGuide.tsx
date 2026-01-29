@@ -25,14 +25,14 @@ export default function RecipeGuide({ open, onClose }: RecipeGuideProps) {
     {
       id: 2,
       title: "2. 커스텀",
-      desc: "사이즈를 원하는대로 수정합니다",
+      desc: "3D 모델 사이즈를 수정합니다",
       imgSrc: "/judang_settings.png",
       imgWidth: '145px' 
     },
     {
       id: 3,
       title: "3. 다운로드",
-      desc: "수정한 STL 파일을 다운받습니다",
+      desc: <>수정된 모델을 STL 파일로<br />다운받습니다</>,
       imgSrc: "/judang_download.png",
       imgWidth: '145px' 
     },
