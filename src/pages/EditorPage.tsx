@@ -391,20 +391,20 @@ export default function EditorPage({ file, onFileChange }: EditorPageProps) {
           <Box sx={{ mb: 4 }}>
             <Typography variant="h5" fontWeight="bold" fontSize="1.4rem" sx={{ mb: 2, color: "#333" }}>커터</Typography>
             <DualInputControl label="칼날"
-              leftLabel="Thickness (mm)" leftVal={bladeThick} setLeft={setVal(setBladeThick)} 
-              rightLabel="Depth (mm)" rightVal={bladeDepth} setRight={setVal(setBladeDepth)} 
+              leftLabel="Offset (mm)" leftVal={bladeThick} setLeft={setVal(setBladeThick)} 
+              rightLabel="Extrude (mm)" rightVal={bladeDepth} setRight={setVal(setBladeDepth)} 
               onKeyDown={handleEnterMove} 
               onHelpClick={handleHelpClick('blade')} 
             />
             <DualInputControl label="지지대"
-              leftLabel="Thickness (mm)" leftVal={supportThick} setLeft={setVal(setSupportThick)} 
-              rightLabel="Depth (mm)" rightVal={supportDepth} setRight={setVal(setSupportDepth)} 
+              leftLabel="Offset (mm)" leftVal={supportThick} setLeft={setVal(setSupportThick)} 
+              rightLabel="Extrude (mm)" rightVal={supportDepth} setRight={setVal(setSupportDepth)} 
               onKeyDown={handleEnterMove} 
               onHelpClick={handleHelpClick('support')} 
             />
             <DualInputControl label="바닥"
-              leftLabel="Thickness (mm)" leftVal={baseThick} setLeft={setVal(setBaseThick)} 
-              rightLabel="Depth (mm)" rightVal={baseDepth} setRight={setVal(setBaseDepth)} 
+              leftLabel="Offset (mm)" leftVal={baseThick} setLeft={setVal(setBaseThick)} 
+              rightLabel="Extrude (mm)" rightVal={baseDepth} setRight={setVal(setBaseDepth)} 
               onKeyDown={handleEnterMove} 
               onHelpClick={handleHelpClick('base')} 
             />
