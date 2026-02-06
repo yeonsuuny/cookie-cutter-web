@@ -20,7 +20,7 @@ const DualInputControl = ({
     <Stack direction="row" alignItems="center" spacing={0.5} sx={{ mb: 1 }}>
       <Typography fontWeight={600} fontSize="1.0rem">{label}</Typography>
       {onHelpClick && (
-        <IconButton size="small" onClick={onHelpClick} sx={{ color: '#bdbdbd', p: 0.5, "&:hover": { color: "#777675" } }}>
+        <IconButton size="small" onClick={onHelpClick} sx={{ color: '#bdbdbd', p: 0.5, "&:hover": { color: "#424242" } }}>
           <HelpOutlineIcon fontSize="small" />
         </IconButton>
       )}
@@ -47,7 +47,7 @@ const SingleInputControl = ({
       <Stack direction="row" alignItems="center" spacing={0.5} sx={{ mb: 1 }}>
         <Typography fontWeight={600} fontSize="0.9rem">{label}</Typography>
         {onHelpClick && (
-          <IconButton size="small" onClick={onHelpClick} sx={{ color: '#bdbdbd', p: 0.5, "&:hover": { color: "#FF6F00" } }}>
+          <IconButton size="small" onClick={onHelpClick} sx={{ color: '#bdbdbd', p: 0.5, "&:hover": { color: "#424242" } }}>
             <HelpOutlineIcon fontSize="small" />
           </IconButton>
         )}
@@ -117,7 +117,7 @@ export default function EditorPage({ file, onFileChange }: EditorPageProps) {
     }
   };
 
-  // ✨ [추가됨] 닫기 핸들러 (ParameterGuide의 onClose에 전달)
+  // 닫기 핸들러
   const handleCloseHelp = () => {
     setHelpOption(null);
     setAnchorEl(null);
@@ -143,6 +143,8 @@ export default function EditorPage({ file, onFileChange }: EditorPageProps) {
   const handleInputChange = (e: React.ChangeEvent<any>, setter: React.Dispatch<React.SetStateAction<number | string>>) => setter(e.target.value);
   const setVal = (setter: React.Dispatch<React.SetStateAction<number | string>>) => (val: string) => setter(val);
   const getSafeNumber = (val: number | string, def: number) => { const n = Number(val); return isNaN(n) ? def : n; };
+  
+  // ✨ 여기가 파일 업로드 핸들러입니다! (이게 있어야 함)
   const handleNewFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
     if (selectedFile && onFileChange) {
@@ -151,9 +153,12 @@ export default function EditorPage({ file, onFileChange }: EditorPageProps) {
   };
  
   // ---------------------------------------------------------------------------
-  // 2-3. 핵심 로직
+  // 2-3. 핵심 로직 (수정됨: 무한루프 방지 및 다운로드 로딩 적용)
   // ---------------------------------------------------------------------------
   const generateModel = useCallback(async (isDownload: boolean = false) => {
+    if (!file) return;
+
+    // ✨ 다운로드든 아니든 무조건 로딩 시작
     setIsLoading(true);
 
     try {
@@ -219,10 +224,12 @@ export default function EditorPage({ file, onFileChange }: EditorPageProps) {
       console.error("Error generating STL:", error);
       if (isDownload) alert("서버 통신 중 오류가 발생했습니다.");
     } finally {
+      // ✨ 무조건 로딩 끝 (여기에 재귀호출 없음!)
       setIsLoading(false);
     }
   }, [file, type, size, minThickness, bladeThick, bladeDepth, supportThick, supportDepth, baseThick, baseDepth, gap, stampProtrusion, stampDepression, wallOffset, wallExtrude]);
 
+  // ✨ 파일 바뀌면 자동 실행 (여기서 generateModel 호출)
   useEffect(() => {
     if (file && prevFileRef.current !== file) {
       prevFileRef.current = file;
@@ -246,15 +253,14 @@ export default function EditorPage({ file, onFileChange }: EditorPageProps) {
           stlUrl={stlUrl}
         />
         
-        {/* 가이드 팝업 컴포넌트 */}
-        {/* ✨ [수정] onClose에 handleCloseHelp 전달 */}
+        {/* 가이드 팝업 */}
         <ParameterGuide 
           activeOption={helpOption} 
           anchorEl={anchorEl} 
           onClose={handleCloseHelp} 
         />
        
-        {/* 로딩 중일 때 뜨는 흐린 배경과 텍스트 */}
+        {/* 로딩 화면 (다운로드 시에도 뜸) */}
         {isLoading && (
           <Box sx={{
             position: "absolute", top: 0, left: 0, right: 0, bottom: 0,
@@ -277,10 +283,10 @@ export default function EditorPage({ file, onFileChange }: EditorPageProps) {
         )}
       </Box>
 
-      {/* [오른쪽 영역] 컨트롤 패널 (설정값 입력) */}
+      {/* [오른쪽 영역] 컨트롤 패널 */}
       <Paper elevation={4} sx={{ width: 360, bgcolor: "white", zIndex: 10, display: "flex", flexDirection: "column", p: 3, overflowY: "auto" }}>
         
-        {/* 섹션 1: 기본 설정 (타입, 크기, 보호옵션) */}
+        {/* 섹션 1: 기본 설정 */}
         <Box sx={{ mb: 4 }}>
           <Typography variant="h6" fontWeight="bold" fontSize="1.4rem" sx={{ mb: 2 }}>기본 설정</Typography>
           <ToggleButtonGroup value={type} exclusive onChange={handleTypeChange} fullWidth size="small" sx={{ mb: 3 }}>
@@ -295,7 +301,6 @@ export default function EditorPage({ file, onFileChange }: EditorPageProps) {
               <Input value={size} fullWidth type="number" onChange={(e) => handleInputChange(e, setSize)} onKeyDown={handleEnterMove} />
             </Box>
             
-            {/* 커터 전용이 아닐 때만 최소 두께 옵션 표시 */}
             {type !== 'cutter' && (
               <Box>
                 <Stack direction="row" justifyContent="space-between">
@@ -321,18 +326,16 @@ export default function EditorPage({ file, onFileChange }: EditorPageProps) {
           <Box sx={{ mb: 3 }}>
              <Typography variant="h5" fontWeight="bold" fontSize="1.4rem" sx={{ mb: 2, color: "#333" }}>스탬프</Typography>
             
-            {/* 1. 높이 설정 (직접 구현하여 물음표 분리) */}
             <Box sx={{ mb: 3 }}>
-              {/* 메인 제목 (물음표 없음) */}
               <Typography gutterBottom fontWeight={600} fontSize="1.0rem" sx={{ mb: 1 }}>높이 설정</Typography>
 
               <Stack spacing={1.5}>
                 
-                {/* (1) 돌출부 높이 + 물음표 */}
+                {/* 돌출부 */}
                 <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ bgcolor: "#f5f5f5", p: 1, px: 1.5, borderRadius: 1 }}>
                   <Stack direction="row" alignItems="center" spacing={0.5}>
                     <Typography variant="caption" color="text.secondary">돌출부 높이 (mm)</Typography>
-                    <IconButton size="small" onClick={handleHelpClick('stampProtrusion')} sx={{ color: '#bdbdbd', p: 0.5, "&:hover": { color: "#777675" } }}>
+                    <IconButton size="small" onClick={handleHelpClick('stampProtrusion')} sx={{ color: '#bdbdbd', p: 0.5, "&:hover": { color: "#424242" } }}>
                        <HelpOutlineIcon fontSize="small" />
                     </IconButton>
                   </Stack>
@@ -341,11 +344,11 @@ export default function EditorPage({ file, onFileChange }: EditorPageProps) {
                   />
                 </Stack>
 
-                {/* (2) 함몰부 높이 + 물음표 */}
+                {/* 함몰부 */}
                 <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ bgcolor: "#f5f5f5", p: 1, px: 1.5, borderRadius: 1 }}>
                    <Stack direction="row" alignItems="center" spacing={0.5}>
                     <Typography variant="caption" color="text.secondary">함몰부 높이 (mm)</Typography>
-                    <IconButton size="small" onClick={handleHelpClick('stampDepression')} sx={{ color: '#bdbdbd', p: 0.5, "&:hover": { color: "#777675" } }}>
+                    <IconButton size="small" onClick={handleHelpClick('stampDepression')} sx={{ color: '#bdbdbd', p: 0.5, "&:hover": { color: "#424242" } }}>
                        <HelpOutlineIcon fontSize="small" />
                     </IconButton>
                   </Stack>
@@ -357,7 +360,6 @@ export default function EditorPage({ file, onFileChange }: EditorPageProps) {
               </Stack>
             </Box>
             
-            {/* 2. 내벽 설정 */}
             <DualInputControl label="내벽"
               leftLabel="Offset (mm)" leftVal={wallOffset} setLeft={setVal(setWallOffset)} 
               rightLabel="Extrude (mm)" rightVal={wallExtrude} setRight={setVal(setWallExtrude)} 
@@ -367,15 +369,14 @@ export default function EditorPage({ file, onFileChange }: EditorPageProps) {
           </Box>
         )}
 
-        {/* 섹션 3: 간격 설정 (Both일 때만) */}
+        {/* 섹션 3: 간격 설정 */}
         {(type === 'both') && (
           <>
             <Divider sx={{ mb: 3 }} />
             <Box sx={{ mb: 4 }}>
-               {/* ✨ 간격 제목 옆에 물음표 */}
                <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
                   <Typography variant="h5" fontWeight="bold" fontSize="1.4rem" sx={{ color: "#333" }}>스탬프와 커터 사이 간격</Typography>
-                  <IconButton size="small" onClick={handleHelpClick('gap')} sx={{ color: '#bdbdbd', "&:hover": { color: "#777675" } }}>
+                  <IconButton size="small" onClick={handleHelpClick('gap')} sx={{ color: '#bdbdbd', "&:hover": { color: "#424242" } }}>
                     <HelpOutlineIcon fontSize="small" />
                   </IconButton>
                </Stack>
@@ -385,25 +386,25 @@ export default function EditorPage({ file, onFileChange }: EditorPageProps) {
           </>
         )}
 
-        {/* 섹션 4: 커터 설정 (조건부 렌더링) */}
+        {/* 섹션 4: 커터 설정 */}
         {(type === 'both' || type === 'cutter') && (
           <Box sx={{ mb: 4 }}>
             <Typography variant="h5" fontWeight="bold" fontSize="1.4rem" sx={{ mb: 2, color: "#333" }}>커터</Typography>
             <DualInputControl label="칼날"
-              leftLabel="Offset (mm)" leftVal={bladeThick} setLeft={setVal(setBladeThick)} 
-              rightLabel="Extrude (mm)" rightVal={bladeDepth} setRight={setVal(setBladeDepth)} 
+              leftLabel="Thickness (mm)" leftVal={bladeThick} setLeft={setVal(setBladeThick)} 
+              rightLabel="Depth (mm)" rightVal={bladeDepth} setRight={setVal(setBladeDepth)} 
               onKeyDown={handleEnterMove} 
               onHelpClick={handleHelpClick('blade')} 
             />
             <DualInputControl label="지지대"
-              leftLabel="Offset (mm)" leftVal={supportThick} setLeft={setVal(setSupportThick)} 
-              rightLabel="Extrude (mm)" rightVal={supportDepth} setRight={setVal(setSupportDepth)} 
+              leftLabel="Thickness (mm)" leftVal={supportThick} setLeft={setVal(setSupportThick)} 
+              rightLabel="Depth (mm)" rightVal={supportDepth} setRight={setVal(setSupportDepth)} 
               onKeyDown={handleEnterMove} 
               onHelpClick={handleHelpClick('support')} 
             />
             <DualInputControl label="바닥"
-              leftLabel="Offset (mm)" leftVal={baseThick} setLeft={setVal(setBaseThick)} 
-              rightLabel="Extrude (mm)" rightVal={baseDepth} setRight={setVal(setBaseDepth)} 
+              leftLabel="Thickness (mm)" leftVal={baseThick} setLeft={setVal(setBaseThick)} 
+              rightLabel="Depth (mm)" rightVal={baseDepth} setRight={setVal(setBaseDepth)} 
               onKeyDown={handleEnterMove} 
               onHelpClick={handleHelpClick('base')} 
             />
@@ -420,7 +421,7 @@ export default function EditorPage({ file, onFileChange }: EditorPageProps) {
             size="large"
             startIcon={<RefreshIcon />}
             onClick={() => {
-              setLoadingText("변경 사항 적용 중...");
+              setLoadingText("변경 사항을 적용 중...");
               generateModel(false);
             }}
             disabled={isLoading}
@@ -438,7 +439,10 @@ export default function EditorPage({ file, onFileChange }: EditorPageProps) {
             fullWidth
             variant="contained"
             size="large"
-            onClick={() => generateModel(true)}
+            onClick={() => {
+                setLoadingText("STL 파일 생성 중입니다...\n약 1분만 기다려주세요!🍪");
+                generateModel(true);
+            }}
             disabled={isLoading}
             sx={{
               bgcolor: "#5D4037", py: 1.5, fontWeight: "bold", mb: 2,
@@ -468,6 +472,7 @@ export default function EditorPage({ file, onFileChange }: EditorPageProps) {
               }}
           >
             새로운 파일 업로드
+            {/* ✨ 여기가 핵심! 이 input이 있어야 파일 업로드가 됨 */}
             <input
               type="file"
               hidden
