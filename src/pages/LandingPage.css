@@ -175,3 +175,21 @@
   }
 }
 
+/* src/pages/LandingPage.css 하단에 추가 */
+
+.deco-cookies {
+  bottom: 3%;    /* 바닥에서의 높이 */
+  left: 17%;     /* 왼쪽에서의 위치 (우유와 오븐 사이 적당한 곳) */
+  width: 470px;  /* 이미지 크기 조절 */
+  transform: rotate(0deg); /* 살짝 기울여서 자연스럽게 */
+}
+
+/* 모바일 대응 (반응형) */
+@media (max-width: 1000px) {
+  .deco-cookies {
+    width: 120px;
+    bottom: 18%;
+    left: 15%;
+  }
+}
+

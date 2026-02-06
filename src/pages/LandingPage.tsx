@@ -38,6 +38,11 @@ export default function LandingPage({ onStart }: LandingPageProps) {
         alt="Cookie Cutter" 
         className="table-deco deco-cutter" 
       />
+      <img 
+        src="/sugar_cookie.png" 
+        alt="Cookies and Sugar" 
+        className="table-deco deco-cookies" 
+      />
 
       {/* 벽에 붙은 레시피 메모 */}
       <div className="wall-recipe-note" onClick={handleOpenGuide}>
