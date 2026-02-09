@@ -164,7 +164,7 @@ export default function Viewer3D(props: Viewer3DProps) {
         </Suspense>
 
         <gridHelper args={[500, 20, 0xe0e0e0, 0xe0e0e0]} position={[0, 0, 0]} />
-        <OrbitControls makeDefault minPolarAngle={0} maxPolarAngle={Math.PI / 2.1} /> 
+        <OrbitControls makeDefault /> 
       </Canvas>
 
       <div style={{
