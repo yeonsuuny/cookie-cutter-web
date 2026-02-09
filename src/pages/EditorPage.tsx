@@ -334,7 +334,7 @@ export default function EditorPage({ file, onFileChange }: EditorPageProps) {
                 {/* 돌출부 */}
                 <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ bgcolor: "#f5f5f5", p: 1, px: 1.5, borderRadius: 1 }}>
                   <Stack direction="row" alignItems="center" spacing={0.5}>
-                    <Typography variant="caption" color="text.secondary">돌출부 높이 (mm)</Typography>
+                    <Typography variant="caption" color="text.secondary" sx={{fontSize: "0.85rem"}}>돌출부 높이 (mm)</Typography>
                     <IconButton size="small" onClick={handleHelpClick('stampProtrusion')} sx={{ color: '#bdbdbd', p: 0.5, "&:hover": { color: "#424242" } }}>
                        <HelpOutlineIcon fontSize="small" />
                     </IconButton>
@@ -347,7 +347,7 @@ export default function EditorPage({ file, onFileChange }: EditorPageProps) {
                 {/* 함몰부 */}
                 <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ bgcolor: "#f5f5f5", p: 1, px: 1.5, borderRadius: 1 }}>
                    <Stack direction="row" alignItems="center" spacing={0.5}>
-                    <Typography variant="caption" color="text.secondary">함몰부 높이 (mm)</Typography>
+                    <Typography variant="caption" color="text.secondary" sx={{fontSize: "0.85rem"}}>함몰부 높이 (mm)</Typography>
                     <IconButton size="small" onClick={handleHelpClick('stampDepression')} sx={{ color: '#bdbdbd', p: 0.5, "&:hover": { color: "#424242" } }}>
                        <HelpOutlineIcon fontSize="small" />
                     </IconButton>
