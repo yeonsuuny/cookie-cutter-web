@@ -5,7 +5,7 @@ import { Paper, Typography, Box, Popper, Fade, ClickAwayListener } from '@mui/ma
 const GUIDE_CONTENT: Record<string, { title: string; desc: React.ReactNode; color: string }> = {
   blade: {
     title: "칼날",
-    desc: "쿠키 반죽을 자르는 가장 윗부분입니다. Offset은 두께, Extrude는 높이입니다.",
+    desc: "쿠키 반죽을 자르는 가장 윗부분입니다. Thickness은 두께, Depth는 높이입니다.",
     color: "#607D8B" 
   },
   wall: {
@@ -15,12 +15,12 @@ const GUIDE_CONTENT: Record<string, { title: string; desc: React.ReactNode; colo
   },
   base: {
     title: "바닥",
-    desc: <>커터 전체를 지탱하는 밑판입니다.<br /> Offset은 두께, Extrude는 높이입니다.</>,
+    desc: <>커터 전체를 지탱하는 밑판입니다.<br /> Thickness은 두께, Depth는 높이입니다.</>,
     color: "#607D8B" 
   },
   support: {
     title: "지지대",
-    desc: "칼날과 바닥을 연결해주는 중간 층입니다. Offset은 두께, Extrude는 높이입니다.",
+    desc: "칼날과 바닥을 연결해주는 중간 층입니다. Thickness은 두께, Depth는 높이입니다.",
     color: "#607D8B" 
   },
   stampProtrusion: {
@@ -83,14 +83,16 @@ export default function ParameterGuide({ activeOption, anchorEl, onClose }: Para
                 {content.desc}
               </Typography>
               
-              <Box sx={{ width: '100%', height: 190, bgcolor: '#fff', borderRadius: 1, overflow: 'hidden', border: '1px solid #eee', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                 <img 
-                   src={`/guides/${activeOption}.png`} 
-                   alt={content.title}
-                   style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
-                   onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                 />
-              </Box>
+              {activeOption !== 'gap' && (
+                <Box sx={{ width: '100%', height: 190, bgcolor: '#fff', borderRadius: 1, overflow: 'hidden', border: '1px solid #eee', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                   <img 
+                     src={`/guides/${activeOption}.png`} 
+                     alt={content.title}
+                     style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+                     onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                   />
+                </Box>
+              )}
             </Paper>
           </Fade>
         </ClickAwayListener>
