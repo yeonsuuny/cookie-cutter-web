@@ -25,7 +25,8 @@ export default function OvenUploader({ onFileSelected }: OvenUploaderProps) {
   // [3-1] 파일 읽기 및 미리보기 생성 (공통 함수)
   const handleFile = (file: File) => {
     // PNG 파일 아니면 처리하지 않고 종료
-    if (file.type !== "image/png" && !file.name.toLowerCase().endsWith(".png")) {
+    const validTypes = ["image/png", "image/jpeg", "image/jpg"];
+    if (!validTypes.includes(file.type) && !/\.(png|jpg|jpeg)$/i.test(file.name)) {
         return;
     }
 
@@ -65,7 +66,8 @@ export default function OvenUploader({ onFileSelected }: OvenUploaderProps) {
     
     // 드래그 중인 파일의 타입을 확인
     const item = e.dataTransfer.items?.[0];
-    if (item && item.type !== "image/png") {
+    const validTypes = ["image/png", "image/jpeg", "image/jpg"];
+    if (item && !validTypes.includes(item.type)) {
         // PNG가 아니면 드롭 금지 표시 (커서가 금지 모양으로 변함)
         e.dataTransfer.dropEffect = "none";
     } else {
@@ -83,8 +85,12 @@ export default function OvenUploader({ onFileSelected }: OvenUploaderProps) {
     
     // 파일이 있고, PNG인지 검사
     if (droppedFile) {
-        if (droppedFile.type !== "image/png" && !droppedFile.name.toLowerCase().endsWith(".png")) {
-            return;
+        const validTypes = ["image/png", "image/jpeg", "image/jpg"];
+        if (
+          !validTypes.includes(droppedFile.type) &&
+          !/\.(png|jpg|jpeg)$/i.test(droppedFile.name)
+        ) {
+          return;
         }
         // 통과하면 파일 처리
         handleFile(droppedFile);
@@ -137,7 +143,7 @@ export default function OvenUploader({ onFileSelected }: OvenUploaderProps) {
       {/* 오븐 전체를 덮고 있어서 어디를 클릭해도 파일 선택 창이 뜸 */}
       <input 
         type="file" 
-        accept=".png" 
+        accept=".png, .jpg, .jpeg" 
         className="hidden-file-input"
         onChange={handleChange}
       />
