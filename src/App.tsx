@@ -1,16 +1,42 @@
-// src/App.tsx
 import React, { useState, useRef, useEffect } from "react";
 import { Snackbar, Alert } from "@mui/material"; 
+import localforage from "localforage"; 
 
 import Header from "./components/Header";
 import LoginDialog from "./components/LoginDialog";
 import SignUpDialog from "./components/SignUpDialog";
 import LandingPage from "./pages/LandingPage";
 import EditorPage from "./pages/EditorPage";
-import LibraryPage from "./pages/LibraryPage";
+import LibraryPage from "./pages/LibraryPage"; 
 import FindPasswordDialog from "./components/FindPasswordDialog"; 
 import PasswordResetPage from "./pages/PasswordResetPage";
 import { supabase } from "./supabaseClient"; 
+
+export interface EditorSettings {
+  type: string;
+  size: number | string;
+  minThickness: number | string;
+  bladeThick: number | string;
+  bladeDepth: number | string;
+  supportThick: number | string;
+  supportDepth: number | string;
+  baseThick: number | string;
+  baseDepth: number | string;
+  gap: number | string;
+  stampProtrusion: number | string;
+  stampDepression: number | string;
+  wallOffset: number | string;
+  wallExtrude: number | string;
+}
+
+export interface LibraryItem {
+  id: number;
+  file: File;
+  stlFile?: File;
+  name: string;
+  date: string;
+  settings?: EditorSettings;
+}
 
 export default function App() {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
@@ -18,17 +44,21 @@ export default function App() {
   const [isFindPwOpen, setIsFindPwOpen] = useState(false);
   
   const [currentPage, setCurrentPage] = useState<"landing" | "editor" | "library" | "passwordReset">("landing");
-  
-  // ⭐️ [중요] 토큰을 저장해둘 변수 (시계 오류/새로고침 방지용)
   const [resetToken, setResetToken] = useState<string>("");
 
-  const [libraryItems, setLibraryItems] = useState<File[]>([]);
+  const [libraryItems, setLibraryItems] = useState<LibraryItem[]>([]);
   const [currentFile, setCurrentFile] = useState<File | null>(null);
+  
+  const [currentId, setCurrentId] = useState<number | null>(null); 
+
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error" | "info">("success");
+  
+  const [isLibraryLoaded, setIsLibraryLoaded] = useState(false);
+
   const headerFileInputRef = useRef<HTMLInputElement>(null);
 
   const showSnackbar = (message: string, severity: "success" | "error" | "info" = "success") => {
@@ -38,7 +68,28 @@ export default function App() {
   };
   const handleCloseSnackbar = () => setSnackbarOpen(false);
 
-  // 카카오 토큰 교환
+  useEffect(() => {
+    const loadLibrary = async () => {
+      try {
+        const savedItems = await localforage.getItem<LibraryItem[]>("my_cookie_library");
+        if (savedItems) {
+          setLibraryItems(savedItems);
+        }
+      } catch (err) {
+        console.error("보관함 불러오기 실패:", err);
+      } finally {
+        setIsLibraryLoaded(true);
+      }
+    };
+    loadLibrary();
+  }, []);
+
+  useEffect(() => {
+    if (isLibraryLoaded) {
+      localforage.setItem("my_cookie_library", libraryItems);
+    }
+  }, [libraryItems, isLibraryLoaded]);
+
   const exchangeKakaoToken = async (supabaseAccessToken: string) => {
     try {
       const response = await fetch("https://cookie-cutter-server.onrender.com/login/sns", {
@@ -53,9 +104,7 @@ export default function App() {
         setIsLoginOpen(false); 
         showSnackbar("카카오 로그인 되었습니다!", "success");
         if (pendingFile) {
-            setCurrentFile(pendingFile);
-            setLibraryItems((prev) => [...prev, pendingFile]);
-            setCurrentPage("editor");
+            handleStartWithFile(pendingFile); 
             setPendingFile(null); 
         }
       } else {
@@ -65,29 +114,19 @@ export default function App() {
   };
 
   useEffect(() => {
-    // ⭐️ [수정됨] 토큰이 있고, 동시에 "type=recovery"라는 표시가 있을 때만 재설정 페이지로 이동
-    // 카카오 로그인은 type=recovery가 없으므로 이 조건문에 걸리지 않음!
-    if (
-        window.location.hash && 
-        window.location.hash.includes("access_token") && 
-        window.location.hash.includes("type=recovery") 
-    ) {
+    if (window.location.hash && window.location.hash.includes("access_token") && window.location.hash.includes("type=recovery")) {
         const hash = window.location.hash;
         const params = new URLSearchParams(hash.substring(1));
         const token = params.get("access_token");
-
         if (token) {
             setResetToken(token);
             setCurrentPage("passwordReset");
-            // 주소창 청소
             window.history.replaceState(null, "", window.location.pathname);
-            return; // ⭐️ 중요: 여기서 함수 종료 (아래 로그인 로직과 섞이지 않게)
+            return; 
         }
     }
-
     const token = localStorage.getItem("accessToken");
     if (token) setIsLoggedIn(true);
-
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === "SIGNED_IN" && session) {
         const localToken = localStorage.getItem("accessToken");
@@ -99,24 +138,102 @@ export default function App() {
       }
     });
     return () => { authListener.subscription.unsubscribe(); };
-  }, [pendingFile]); 
+  }, []); 
 
-  // ... (나머지 핸들러 함수들 기존과 동일) ...
   const checkLogin = () => { if (!isLoggedIn) { setIsLoginOpen(true); return false; } return true; };
   const handleLogout = async () => { await supabase.auth.signOut(); localStorage.removeItem("accessToken"); setIsLoggedIn(false); setCurrentPage("landing"); setCurrentFile(null); };
-  const handleStartWithFile = (file: File) => { if (!isLoggedIn) { setPendingFile(file); setIsLoginOpen(true); return; } setCurrentFile(file); setLibraryItems((prev) => [...prev, file]); setCurrentPage("editor"); };
+  
+  const handleStartWithFile = (file: File) => { 
+      if (!isLoggedIn) { 
+          setPendingFile(file); 
+          setIsLoginOpen(true); 
+          return; 
+      } 
+      setCurrentFile(file); 
+
+      const newId = Date.now(); 
+      setCurrentId(newId);      
+
+      const newItem: LibraryItem = {
+        id: newId,
+        file: file,
+        stlFile: undefined,
+        name: file.name,
+        date: new Date().toLocaleString(),
+        settings: undefined 
+      };
+
+      setLibraryItems((prev) => [newItem, ...prev]); 
+      setCurrentPage("editor"); 
+  };
+  
   const handleHeaderUploadClick = () => { if (!checkLogin()) return; headerFileInputRef.current?.click(); };
   const handleLibraryClick = () => { if (!checkLogin()) return; setCurrentPage("library"); };
   const handleHeaderFileChange = (e: React.ChangeEvent<HTMLInputElement>) => { const file = e.target.files?.[0]; if (file) handleStartWithFile(file); e.target.value = ""; };
-  const handleDeleteItem = (index: number) => setLibraryItems((prev) => prev.filter((_, i) => i !== index));
-  const handleEditItem = (file: File) => { setCurrentFile(file); setCurrentPage("editor"); };
+  
+  const handleDeleteItem = (id: number) => {
+    setLibraryItems((prev) => prev.filter((item) => item.id !== id));
+  };
+
+  const handleRenameItem = (id: number, newName: string) => {
+    setLibraryItems((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, name: newName } : item))
+    );
+  };
+
+  const handleEditItem = (item: LibraryItem) => { 
+    setCurrentId(item.id); 
+    setCurrentFile(item.file); 
+    setCurrentPage("editor"); 
+  };
+
+  const handleStlUpdate = (stlFile: File) => {
+    if (!currentId) return;
+    setLibraryItems((prev) => 
+      prev.map((item) => 
+        item.id === currentId ? { ...item, stlFile: stlFile, date: new Date().toLocaleString() } : item
+      )
+    );
+  };
+
+  const handleSettingsUpdate = (newSettings: EditorSettings) => {
+  if (!currentId) return;
+  setLibraryItems((prev) => 
+    prev.map((item) => 
+      // data -> date 로 오타 수정!
+      item.id === currentId ? { ...item, settings: newSettings, date: new Date().toLocaleString() } : item
+    )
+  );
+};
 
   const renderPage = () => {
     switch (currentPage) {
-      case "editor": return <EditorPage file={currentFile} onFileChange={(file) => handleStartWithFile(file)} />; 
-      case "library": return <LibraryPage savedItems={libraryItems} onDelete={handleDeleteItem} onEdit={handleEditItem} />;
-      
-      // ⭐️ [변경] 추출한 토큰(resetToken)을 props로 전달
+      case "editor": 
+        const currentItem = libraryItems.find(item => item.id === currentId);
+        
+        return (
+          <EditorPage
+            key={currentId} 
+            file={currentFile} 
+            // [추가] 보관함에 저장된 이름(name)을 에디터로 보냅니다.
+            // 만약 저장된 게 없으면(새 파일) 파일 원래 이름을 보냅니다.
+            itemName={currentItem ? currentItem.name : currentFile?.name} 
+
+            onFileChange={(file) => handleStartWithFile(file)} 
+            onConversionComplete={handleStlUpdate} 
+            initialSettings={currentItem?.settings}
+            onSettingsChange={handleSettingsUpdate}
+          />
+        );
+      case "library": 
+        return (
+          <LibraryPage 
+            savedItems={libraryItems} 
+            onDelete={handleDeleteItem} 
+            onEdit={handleEditItem}
+            onRename={handleRenameItem} 
+          />
+        );
       case "passwordReset":
         return (
             <PasswordResetPage 
@@ -135,7 +252,7 @@ export default function App() {
 
   return (
     <>
-      <input type="file" hidden ref={headerFileInputRef} accept=".png" onChange={handleHeaderFileChange} />
+      <input type="file" hidden ref={headerFileInputRef} accept=".png, .jpg, .jpeg" onChange={handleHeaderFileChange} />
       <Header 
         onLoginClick={() => setIsLoginOpen(true)} 
         onSignUpClick={() => setIsSignUpOpen(true)}
@@ -146,7 +263,7 @@ export default function App() {
         isCompact={currentPage === "editor" || currentPage === "library" || currentPage === "passwordReset"}
         isTransparent={currentPage === "landing"}
       />
-      <LoginDialog open={isLoginOpen} onClose={() => setIsLoginOpen(false)} onSwitchToSignUp={() => { setIsLoginOpen(false); setIsSignUpOpen(true); }} onLoginSuccess={() => { setIsLoggedIn(true); if (pendingFile) { setCurrentFile(pendingFile); setLibraryItems((prev) => [...prev, pendingFile]); setCurrentPage("editor"); setPendingFile(null); } }} showSnackbar={showSnackbar} onFindPasswordClick={() => setIsFindPwOpen(true)} />
+      <LoginDialog open={isLoginOpen} onClose={() => setIsLoginOpen(false)} onSwitchToSignUp={() => { setIsLoginOpen(false); setIsSignUpOpen(true); }} onLoginSuccess={() => { setIsLoggedIn(true); if (pendingFile) { handleStartWithFile(pendingFile); setPendingFile(null); } }} showSnackbar={showSnackbar} onFindPasswordClick={() => setIsFindPwOpen(true)} />
       <SignUpDialog open={isSignUpOpen} onClose={() => setIsSignUpOpen(false)} showSnackbar={showSnackbar} />
       <FindPasswordDialog open={isFindPwOpen} onClose={() => setIsFindPwOpen(false)} showSnackbar={showSnackbar} />
       {renderPage()}

@@ -18,7 +18,7 @@ export default function RecipeGuide({ open, onClose }: RecipeGuideProps) {
     {
       id: 1,
       title: "1. 업로드",
-      desc: <>원하는 이미지 파일을 업로드 합니다<br />PNG 파일만 가능해요!</>,
+      desc: <>원하는 이미지 파일을 업로드 합니다<br />PNG, JPG 파일만 가능해요!</>,
       imgSrc: "/judang_upload.png",
       imgWidth: '155px' 
     },

@@ -5,12 +5,12 @@ import { Paper, Typography, Box, Popper, Fade, ClickAwayListener } from '@mui/ma
 const GUIDE_CONTENT: Record<string, { title: string; desc: React.ReactNode; color: string }> = {
   blade: {
     title: "칼날",
-    desc: "쿠키 반죽을 자르는 가장 윗부분입니다. Thickness은 두께, Depth는 높이입니다.",
+    desc: <>반죽을 실제로 자르는 부분입니다.<br /> Thickness은 두께, Depth는 높이입니다.</>,
     color: "#607D8B" 
   },
   wall: {
     title: "내벽",
-    desc: "쿠키 모양을 잡아주는 테두리입니다. Offset은 두께, Extrude는 높이입니다.",
+    desc: "스탬프의 가장자리를 감싸는 외곽 테두리입니다. Offset은 두께, Extrude는 높이입니다.",
     color: "#7B1FA2" 
   },
   base: {
@@ -25,12 +25,12 @@ const GUIDE_CONTENT: Record<string, { title: string; desc: React.ReactNode; colo
   },
   stampProtrusion: {
     title: "돌출부 높이",
-    desc: "기준면보다 위로 튀어나오는 부분입니다.",
+    desc: "무늬가 반죽에 찍히는 부분의 깊이입니다.",
     color: "#9C27B0" 
   },
   stampDepression: {
     title: "함몰부 높이",
-    desc: "기준면보다 아래로 들어가는 부분입니다.",
+    desc: "무늬들 사이를 이어주며 스탬프의 바닥이 되는 평면의 높이입니다.",
     color: "#7B1FA2" // 보라색 계열로 조금 다르게
   },
   gap: {
@@ -68,7 +68,7 @@ export default function ParameterGuide({ activeOption, anchorEl, onClose }: Para
             <Paper
               elevation={6}
               sx={{
-                width: 300, // 설명 모달 창 전체 너비
+                width: 340, // 설명 모달 창 전체 너비
                 p: 2,
                 borderRadius: 2,
                 bgcolor: 'rgba(255, 255, 255, 0.98)',
