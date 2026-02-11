@@ -10,6 +10,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline'; // 이름 변경 아이콘
 import DownloadIcon from "@mui/icons-material/Download";
+import { Alert, AlertTitle } from '@mui/material';
 
 // ----------------------------------------------------------------------
 // 1. 타입 정의
@@ -133,6 +134,25 @@ export default function LibraryPage({ savedItems, onDelete, onEdit, onRename }: 
         <Typography variant="h4" fontWeight="bold" gutterBottom sx={{ color: "#333" }}>
           작업 보관함
         </Typography>
+
+        {/* 고정 안내 문구 시작 */}
+        <Alert
+          severity="info"
+          sx={{
+            mb: 4,
+            borderRadius: 3,
+            bgcolor: "#F8F7F2", // 연한 버터색
+            color: "#5D4037",    // 진한 초콜릿색 글씨
+            border: "1px solid #E8E6E0",
+            "& .MuiAlert-icon": { color: "#FFA000" }
+          }}
+        >
+          <AlertTitle sx={{ fontWeight: "bold" }}>데이터 저장 안내</AlertTitle>
+          모든 작업물은 사용 중인 <strong>브라우저 내부</strong>에만 저장됩니다.
+          기기를 변경하거나 브라우저 쿠키를 삭제할 경우 데이터가 사라질 수 있으니, 중요한 파일은 반드시 <strong>STL로 다운로드</strong>하여 보관해 주세요!
+        </Alert>
+        {/* 고정 안내 문구 끝 */}
+
         <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
           총 {savedItems.length}개의 저장된 모델이 있습니다.
         </Typography>
