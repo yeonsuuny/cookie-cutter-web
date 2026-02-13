@@ -1,73 +1,79 @@
-# React + TypeScript + Vite
+# 🍪 쿠키커터 웹 서비스 (인수인계 가이드)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+이 문서는 **쿠키커터 3D 변환 웹 서비스**의 유지보수 및 수정을 담당하실 분을 위한 가이드입니다.
+프로젝트의 구조, 주요 기능의 위치, 그리고 자주 수정해야 할 포인트들을 정리했습니다.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 1. 프로젝트 실행 방법
 
-## React Compiler
+이 프로젝트는 `React (Vite)` 환경에서 실행됩니다.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+1. **패키지 설치**: `npm install`
+2. **로컬 실행**: `npm run dev` (http://localhost:5173 접속)
+3. **빌드(배포용)**: `npm run build`
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 2. 주요 수정 포인트 (가장 많이 찾게 될 곳)
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+수정 요청이 들어왔을 때, 어디를 열어봐야 할지 정리했습니다.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### 🎨 디자인 & 텍스트 수정
+* **헤더 (로고, 메뉴 위치, 배경색)**
+    * 파일: `src/components/Header.tsx`, `src/styles/Header.css`
+    * 설명: 로고 위치 조절, 메뉴 간격, 슬림 모드 색상 변경 등은 CSS 파일에서 수정합니다.
+* **랜딩 페이지 (메인 화면 문구)**
+    * 파일: `src/pages/LandingPage.tsx`
+    * 설명: "나만의 쿠키커터 만들기" 같은 메인 멘트나 배경 이미지를 수정할 수 있습니다.
+* **전체 폰트 & 기본 배경색**
+    * 파일: `src/index.css`
+    * 설명: 웹사이트 전체에 적용되는 폰트나 배경색(흰색)을 관리합니다.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### ⚙️ 기능 수정
+* **3D 뷰어 (배경색, 모델 색상, 조작 가이드)**
+    * 파일: `src/components/Viewer3D.tsx`
+    * 설명: 3D 모델의 색상(`#4D3C20`)이나 뷰어 배경색(`#f0f2f5`), 오른쪽 위 조작 설명 문구를 수정합니다.
+* **에디터 (설정값 범위, 기본값)**
+    * 파일: `src/pages/EditorPage.tsx`
+    * 설명: 두께, 높이 등의 **초기값(0.7mm 등)**을 수정하거나, STL 생성 서버 주소를 변경할 때 수정합니다.
+* **보관함 (저장 안내 문구, 목록 개수)**
+    * 파일: `src/pages/LibraryPage.tsx`
+    * 설명: "브라우저에 저장됩니다" 경고 문구를 수정하거나, 한 줄에 보여줄 카드 개수를 조절합니다.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 🔐 로그인 & 서버 연결
+* **로그인 서버(Supabase) 설정**
+    * 파일: `src/supabaseClient.ts`
+    * 설명: 나중에 Supabase 프로젝트가 바뀌면 여기서 `URL`과 `Key`만 갈아끼우면 됩니다.
+* **STL 변환 서버 (Python 백엔드)**
+    * 위치: `src/pages/EditorPage.tsx` (fetch 주소 확인)
+    * 설명: 현재는 `https://cookie-cutter-server.onrender.com`을 사용 중입니다. 백엔드 주소가 바뀌면 여기서 수정하세요.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+---
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## 3. 폴더 구조 설명
+
+src/
+├── components/          # 재사용 가능한 조각들 (헤더, 팝업창, 3D 뷰어 등)
+│   ├── Header.tsx       # 상단 메뉴바
+│   ├── Viewer3D.tsx     # 3D 모델 보여주는 화면
+│   └── ...Dialog.tsx    # 로그인, 회원가입 팝업창
+├── pages/               # 화면 단위 (페이지)
+│   ├── LandingPage.tsx  # 홈 화면
+│   ├── EditorPage.tsx   # 편집 & 3D 변환 화면
+│   ├── LibraryPage.tsx  # 작업 보관함 화면
+│   └── PasswordReset... # 비밀번호 찾기 화면
+├── App.tsx              # [중요] 페이지 이동(라우팅)과 전체 데이터 관리
+├── main.tsx             # 앱 실행 진입점
+└── supabaseClient.ts    # 로그인 서버 설정 파일
+
+
+## 4. 주의사항 (Tip)
+
+1. **데이터 저장 방식**: 이 웹사이트는 사용자의 작업물을 **브라우저 내부 저장소(IndexedDB)**에 저장합니다. 사용자가 인터넷 기록(쿠키/캐시)을 삭제하면 작업물이 날아갈 수 있다는 점을 꼭 안내해주세요.
+2. **슬림 헤더 모드**: 에디터와 보관함 페이지에서는 헤더가 얇아집니다(`compact` 모드). 이 설정은 `App.tsx`에서 관리합니다.
+3. **App.css**: 이 파일은 초기 예제 파일이므로 비워두거나 삭제해도 괜찮습니다.
+
+---
+
+*인수인계 관련 문의사항이 있다면 언제든 연락주세요!*
