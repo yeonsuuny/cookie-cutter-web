@@ -1,105 +1,115 @@
 import React, { useState } from 'react';
 import './OvenUploader.css';
 
+/**
+ * OvenUploader
+ * - 오븐 그림 위에 파일을 "드래그&드롭"하거나 "클릭"해서 이미지 업로드하는 컴포넌트
+ */
+
 // =============================================================================
-// [1] Props 인터페이스 정의
+// [1] 데이터 규칙 정의
 // =============================================================================
 interface OvenUploaderProps {
-  // 사용자가 파일을 선택했을 때 부모에게 파일 객체를 전달하는 콜백 함수
+  // 부모 컴포넌트(LandingPage)에게 "파일이 들어왔어요!"라고 알려주는 메신저 함수
   onFileSelected: (file: File) => void; 
 }
 
 export default function OvenUploader({ onFileSelected }: OvenUploaderProps) {
-  // ===========================================================================
-  // [2] 상태 관리 (State)
-  // ===========================================================================
-  const [preview, setPreview] = useState<string | null>(null); // 미리보기 이미지 URL (DataURL)
-  const [isDragging, setIsDragging] = useState(false);         // 드래그 중인지 여부 (스타일 변경용)
+  // ---------------------------------------------------------------------------
+  // [2] 설정 및 상태
+  // ---------------------------------------------------------------------------
 
-  const OVEN_IMG_URL = "/oven.png"; // 오븐 프레임 이미지 경로
+  // 허용할 파일 형식 (나중에 svg 등을 추가하고 싶으면 여기만 수정하면 됩니다)
+  const VALID_TYPES = ["image/png", "image/jpeg", "image/jpg"];
 
-  // ===========================================================================
-  // [3] 파일 처리 로직 (Handlers)
-  // ===========================================================================
-  
-  // [3-1] 파일 읽기 및 미리보기 생성 (공통 함수)
-  const handleFile = (file: File) => {
-    // PNG 파일 아니면 처리하지 않고 종료
-    const validTypes = ["image/png", "image/jpeg", "image/jpg"];
-    if (!validTypes.includes(file.type) && !/\.(png|jpg|jpeg)$/i.test(file.name)) {
+  // 오븐 프레임 이미지 경로
+  const OVEN_IMG_URL = "/oven.png";
+
+  // 화면의 변화를 기억하는 변수들
+  const [preview, setPreview] = useState<string | null>(null); // 미리보기 이미지 주소
+  const [isDragging, setIsDragging] = useState(false);         // 드래그 중인지 여부
+
+
+  // ---------------------------------------------------------------------------
+  // [3] 핵심 로직: 파일 처리
+  // ---------------------------------------------------------------------------
+
+  /**
+   * [기능] 파일이 유효한지 검사하고, 미리보기를 만든 뒤, 부모에게 전달합니다.
+   * 클릭해서 넣든, 드래그해서 넣든 결국 이 함수가 실행됩니다.
+   */
+  const processFile = (file: File) => {
+    // 1. 파일 형식 검사 (PNG, JPG가 아니면 무시)
+    const isFileTypeValid = VALID_TYPES.includes(file.type);
+    const isFileNameValid = /\.(png|jpg|jpeg)$/i.test(file.name);
+
+    if (!isFileTypeValid && !isFileNameValid) {
+        alert("이미지 파일(PNG, JPG)만 넣어주세요.");
         return;
     }
 
+    // 2. 미리보기 생성 (파일을 읽어서 화면에 보여줌)
     const reader = new FileReader();
-    
-    // 파일 읽기가 완료되면 미리보기 상태 업데이트
     reader.onloadend = () => {
-      setPreview(reader.result as string);
+      setPreview(reader.result as string); // 다 읽었으면 미리보기 변수에 저장
     };
-    
-    // 파일을 DataURL 형식으로 읽기 (브라우저에서 바로 보여주기 위함)
     reader.readAsDataURL(file);
     
-    // 부모 컴포넌트에 파일 전달
+    // 3. 부모 컴포넌트로 파일 전달 (실제 업로드 준비)
     onFileSelected(file);
   };
 
-  // [3-2] input 태그를 통한 파일 선택 핸들러
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+
+  // ---------------------------------------------------------------------------
+  // [4] 이벤트 핸들러: 클릭 & 드래그
+  // ---------------------------------------------------------------------------
+
+  // [상황 A] 사용자가 클릭해서 파일을 선택했을 때
+  const handleClickUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      handleFile(file);
+      processFile(file);
     }
-    // ⭐️ 중요: 같은 파일을 다시 선택해도 onChange가 발생하도록 value 초기화
+    // (중요) 같은 파일을 다시 선택해도 작동하도록 입력값을 초기화합니다.
     e.target.value = ""; 
   };
 
-  // ===========================================================================
-  // [4] 드래그 앤 드롭 이벤트 핸들러
-  // ===========================================================================
-  const handleDragEnter = () => setIsDragging(true);  // 파일이 영역 안에 들어옴
-  const handleDragLeave = () => setIsDragging(false); // 파일이 영역 밖으로 나감
-
-  // 드래그 오버 시: PNG가 아니면 '금지' 커서 보여주기
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault(); // 기본 동작 방지 (필수)
-    
-    // 드래그 중인 파일의 타입을 확인
-    const item = e.dataTransfer.items?.[0];
-    const validTypes = ["image/png", "image/jpeg", "image/jpg"];
-    if (item && !validTypes.includes(item.type)) {
-        // PNG가 아니면 드롭 금지 표시 (커서가 금지 모양으로 변함)
-        e.dataTransfer.dropEffect = "none";
-    } else {
-        // PNG면 복사 표시 (커서가 + 모양 등으로 변함)
-        e.dataTransfer.dropEffect = "copy";
-    }
+  // [상황 B] 파일이 오븐 위로 들어왔을 때
+  const handleDragEnter = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true); // 오븐 색깔이나 테두리를 변경하기 위해 신호 켬
   };
-  
+
+  // [상황 C] 파일이 오븐 밖으로 나갔을 때
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false); // 신호 끔
+  };
+
+  // [상황 D] 파일을 오븐 위에 떨궜을 때
   const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();  // 브라우저 기본 동작(파일 열기) 방지
-    e.stopPropagation(); // 이벤트 전파 중단
-    setIsDragging(false); // 드래그 상태 해제
+    e.preventDefault();  // 브라우저가 이미지를 새 탭으로 여는 것을 막음
+    e.stopPropagation(); // 이벤트가 다른 곳으로 퍼지는 것을 막음
+    
+    setIsDragging(false); // 드래그 종료
 
     const droppedFile = e.dataTransfer.files?.[0];
-    
-    // 파일이 있고, PNG인지 검사
     if (droppedFile) {
-        const validTypes = ["image/png", "image/jpeg", "image/jpg"];
-        if (
-          !validTypes.includes(droppedFile.type) &&
-          !/\.(png|jpg|jpeg)$/i.test(droppedFile.name)
-        ) {
-          return;
-        }
-        // 통과하면 파일 처리
-        handleFile(droppedFile);
+        processFile(droppedFile);
     }
   };
 
-  // ===========================================================================
-  // [5] UI 렌더링
-  // ===========================================================================
+  // [상황 E] 드래그 중일 때 커서 모양 처리
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    // 파일이 아니면 '금지' 표시를 띄웁니다.
+    e.dataTransfer.dropEffect = "copy"; 
+  };
+
+
+  // ---------------------------------------------------------------------------
+  // [5] 화면 그리기
+  // ---------------------------------------------------------------------------
   return (
     <div 
       className={`oven-wrapper ${isDragging ? 'dragging' : ''}`}
@@ -108,9 +118,12 @@ export default function OvenUploader({ onFileSelected }: OvenUploaderProps) {
       onDragOver={handleDragOver}
       onDrop={handleDrop}
     >
-      {/* [5-1] 연기 효과 (장식용) */}
+      
+      {/* [Layer 1] 연기 효과
+        오븐 뒤나 안쪽에서 피어오르는 연기를 표현하는 단순 HTML 조각들입니다.
+        움직임은 CSS 파일에 정의되어 있습니다.
+      */}
       <div className="smoke-container">
-        {/* CSS 애니메이션으로 피어오르는 연기 조각들 */}
         <span className="smoke s-1"></span>
         <span className="smoke s-2"></span>
         <span className="smoke s-3"></span>
@@ -122,13 +135,13 @@ export default function OvenUploader({ onFileSelected }: OvenUploaderProps) {
         <span className="smoke s-9"></span>
       </div>
 
-      {/* [5-2] 미리보기 영역 (오븐 내부) */}
+      {/* [Layer 2] 오븐 내부 (미리보기 화면) */}
       <div className="oven-preview-area">
         {preview ? (
-          // 파일이 선택되었으면 미리보기 이미지 표시
+          // 2-1. 파일이 선택되었을 때: 이미지 보여주기
           <img src={preview} alt="preview" className="preview-img" />
         ) : (
-          // 선택된 파일이 없으면 안내 문구 표시
+          // 2-2. 파일이 없을 때: 안내 문구 보여주기
           <div className="upload-guide">
             <span className="guide-button">이미지 업로드</span>
             <p className="guide-desc">파일을 드래그하거나 클릭하세요</p>
@@ -136,16 +149,18 @@ export default function OvenUploader({ onFileSelected }: OvenUploaderProps) {
         )}
       </div>
 
-      {/* [5-3] 오븐 프레임 이미지 (틀) */}
-      <img src={OVEN_IMG_URL} alt="Oven" className="oven-frame-img" />
+      {/* [Layer 3] 오븐 프레임 (껍데기 이미지) */}
+      <img src={OVEN_IMG_URL} alt="Oven Frame" className="oven-frame-img" />
 
-      {/* [5-4] 실제 파일 입력 (숨김 처리됨) */}
-      {/* 오븐 전체를 덮고 있어서 어디를 클릭해도 파일 선택 창이 뜸 */}
+      {/* [Layer 4] 투명 버튼 (Hidden Input)
+        이 input 태그가 오븐 전체를 투명하게 덮고 있습니다.
+        사용자가 오븐 어디를 누르든 실제로는 이 input이 클릭되어 파일 창이 뜹니다.
+      */}
       <input 
         type="file" 
         accept=".png, .jpg, .jpeg" 
         className="hidden-file-input"
-        onChange={handleChange}
+        onChange={handleClickUpload}
       />
     </div>
   );

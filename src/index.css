@@ -1,19 +1,32 @@
+/**
+ * =============================================================================
+ * [파일 설명: index.css - 웹사이트 기초 디자인]
+ * =============================================================================
+ * 이 파일은 웹사이트 전체에 공통으로 적용되는 기본 스타일입니다.
+ * 폰트, 배경색, 여백 초기화 등을 담당합니다.
+ * =============================================================================
+ */
+
+
 :root {
+  /* [기본 폰트 설정] */
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
-  /* 👇 다크모드 해제 & 무조건 라이트모드 색상 적용 */
+  /* [다크모드 해제] 무조건 밝은 테마로 고정 */
   color-scheme: light;
-  color: #213547;           /* 글자색: 진한 남색 계열 (가독성 좋음) */
-  background-color: #ffffff; /* 배경색: 흰색 */
+  color: #213547;             /* 글자색: 진한 남색 계열 */
+  background-color: #ffffff;  /* 배경색: 흰색 */
 
+  /* 글자 깨짐 방지 설정 */
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* [링크(a 태그) 기본 스타일] */
 a {
   font-weight: 500;
   color: #646cff;
@@ -23,6 +36,7 @@ a:hover {
   color: #535bf2;
 }
 
+/* [본문(body) 스타일] */
 body {
   margin: 0;
   display: flex;
@@ -37,6 +51,8 @@ h1 {
   line-height: 1.1;
 }
 
+/* [버튼 기본 스타일] */
+/* MUI(Material UI) 버튼을 주로 쓰기 때문에 이 기본 버튼 스타일은 잘 안 쓰이지만, 혹시 몰라 남겨둡니다. */
 button {
   border-radius: 8px;
   border: 1px solid transparent;
@@ -44,15 +60,16 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  /* 👇 버튼도 밝은 배경에 맞게 수정 */
   background-color: #f9f9f9;
   color: #213547;
   cursor: pointer;
   transition: border-color 0.25s;
 }
+
 button:hover {
   border-color: #646cff;
 }
+
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;

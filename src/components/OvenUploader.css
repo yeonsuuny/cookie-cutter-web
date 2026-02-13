@@ -1,73 +1,93 @@
 /* =============================================================================
-   [1] 오븐 메인 컨테이너 (Wrapper & Frame)
+   [OvenUploader.css] 
+   오븐 모양, 연기 애니메이션, 글자 스타일 등을 정의하는 파일입니다.
    ============================================================================= */
-/* 오븐 전체를 감싸는 통 */
+
+
+/* -----------------------------------------------------------------------------
+   1. 오븐 전체 틀 - 크기와 위치 조절
+   ----------------------------------------------------------------------------- */
 .oven-wrapper {
   position: relative;
-  width: 500px;
+
+  /* [수정 포인트] 오븐 크기를 바꾸려면 여기 숫자를 조절하세요 */
+  width: 500px; 
   height: 500px;
-  margin: 0 auto;
+
+  margin: 0 auto; /* 가운데 정렬 */
   cursor: pointer;
+
   transition: transform 0.2s ease;
-  overflow: visible !important; /* 연기가 밖으로 나가야 해서 visible */
-  transform: translate(5px, 40px); /* 위치 미세 조정 */
+  overflow: visible !important;
+
+  /* 초기 위치 미세 조정 */
+  transform: translate(5px, 40px);
 }
 
-/* 마우스 호버 또는 드래그 중일 때 살짝 커짐 */
+/* 마우스를 올리거나 파일을 드래그해서 가져왔을 때 효과 */
 .oven-wrapper:hover,
 .oven-wrapper.dragging {
+  /* 살짝(1.02배) 커지는 효과 */
   transform: translate(5px, 40px) scale(1.02);
 }
 
-/* 호버 시 오븐 프레임에 주황색 발광 효과 */
+/* 마우스 올렸을 때 오븐 테두리에 주황색 빛(발광) 효과 */
 .oven-wrapper:hover .oven-frame-img,
 .oven-wrapper.dragging .oven-frame-img {
   filter: drop-shadow(0 0 10px #FF7043);
   transition: filter 0.3s ease;
 }
 
-/* 오븐 프레임 이미지 (틀) */
+/* 오븐 껍데기 이미지 (틀) */
 .oven-frame-img {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 2; /* 프리뷰보다 위에 있어야 함 */
+
+  z-index: 2;
   pointer-events: none;
 }
 
 
-/* =============================================================================
-   [2] 연기 애니메이션 (Smoke Effect)
-   ============================================================================= */
+/* -----------------------------------------------------------------------------
+   2. 연기 애니메이션
+   ----------------------------------------------------------------------------- */
+
+/* 연기가 피어오르는 전체 구역 설정 */
 .smoke-container {
   position: absolute;
-  top: -110px;
-  left: 46%;
+  top: -110px;    /* 연기의 위치를 오븐 위쪽으로 위치 잡기 */
+  left: 46%;      /* 좌우 중앙 정렬 */
   transform: translateX(-50%);
+
   width: 300px;
   height: 200px;
   z-index: 999;
-  pointer-events: none; /* 클릭 방해 금지 */
+  pointer-events: none;
 }
 
+/* 개별 연기 조각의 모양 */
 .smoke {
   position: absolute;
   bottom: 0;
   
-  /* 가로가 더 긴 타원형 연기 */
+  /* 연기 크기 (타원형) */
   width: 36px;
   height: 22px; 
-  background-color: #E0E0E0; /* 은은한 회색 */
-  border-radius: 50%; /* 타원 만들기 */
+  background-color: #E0E0E0; /* 연기 색상 */
+  border-radius: 50%;          /* 둥글게 만들기 */
   
   opacity: 0;
-  filter: blur(6px); /* 몽글몽글한 느낌 */
+  filter: blur(6px);
+
+  /* 3.5초 동안 'smokeRise'라는 동작을 무한 반복 */
   animation: smokeRise 3.5s infinite ease-out;
 }
 
-/* [2-1] 연기 조각별 위치 및 시간차 설정 */
+/* [심화] 연기 조각마다 시간차를 줘서 자연스럽게 만듦 
+   (left: 시작 위치, animation-delay: 출발 시간) */
 .smoke.s-1 { left: 20%; animation-delay: 0.5s; }
 .smoke.s-2 { left: 30%; animation-delay: 2.5s; }
 .smoke.s-3 { left: 45%; animation-delay: 0.0s; }
@@ -79,17 +99,20 @@
 .smoke.s-9 { left: 52%; animation-delay: 2.3s; }
 
 
-/* =============================================================================
-   [3] 오븐 내부 콘텐츠 (Preview & Placeholder)
-   ============================================================================= */
+/* -----------------------------------------------------------------------------
+   3. 오븐 내부 콘텐츠 (미리보기 화면)
+   ----------------------------------------------------------------------------- */
 .oven-preview-area {
   position: absolute;
+  /* 오븐 내부에서 위치 잡기 (현재 정중앙으로 되어 있음) */
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+
+  /* 내부 화면 크기 (오븐 틀 안쪽에 맞춰져 있음) */
   width: 60%;
   height: 60%;
-  z-index: 1; /* 프레임 뒤에 위치 */
+  z-index: 1;
   
   display: flex;
   justify-content: center;
@@ -97,16 +120,17 @@
   overflow: hidden;
 }
 
-/* 업로드된 이미지 미리보기 */
+/* 사용자가 올린 이미지 미리보기 */
 .preview-img {
-  width: 50%;
+  width: 50%;   /* 이미지 크기 */
   height: 100%;
   object-fit: contain;
 }
 
-/* =============================================================================
-   [4] 업로드 안내 가이드 (버튼 & 텍스트)
-   ============================================================================= */
+
+/* -----------------------------------------------------------------------------
+   4. 안내 문구 디자인 (텍스트 & 버튼)
+   ----------------------------------------------------------------------------- */
 .upload-guide {
   display: flex;
   flex-direction: column;
@@ -116,30 +140,33 @@
   width: 100%;
 }
 
-/* "이미지 선택하기" 버튼 스타일 */
+/* [버튼] '이미지 업로드' 주황색 박스 */
 .guide-button {
-  background-color: #FF7043;
-  color: white;              
-  font-family: 'Jua', sans-serif;
-  font-size: 1.2rem;         
-  padding: 6px 18px;         
-  border-radius: 20px;       
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  background-color: #FF7043;                /* [수정 포인트] 버튼 배경색 */
+  color: white;                             /* 글자색 */
+  font-family: 'Jua', sans-serif;             /* 글씨체 */
+  font-size: 1.2rem;                          /* 글씨 크기 */
+  padding: 6px 18px;                          /* 안쪽 여백 (상하, 좌우) */
+  border-radius: 20px;                        /* 둥근 모서리, 숫자 크게 할수록 더 둥글게 됨 */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);    /* 그림자 */
 }
 
-/* 안내 문구 ("파일을 드래그하거나...") */
+/* [설명] '파일을 드래그하거나...' 글씨 */
 .guide-desc {
-  font-family: 'Jua', sans-serif;
-  font-size: 1.1rem;        
-  color: #8D6E63;
+  font-family: 'Jua', sans-serif;  /* 글씨체 */
+  font-size: 1.1rem;               /* 글씨 크기 */
+  color: #8D6E63;                /* 글자색 */
   margin: 0;
-  white-space: nowrap;      
+  white-space: nowrap;
 }
 
-/* =============================================================================
-   [5] 상호작용 및 기타 (Input & Animations)
-   ============================================================================= */
-/* 숨겨진 파일 입력 (전체 영역 클릭 가능하게 함) */
+
+/* -----------------------------------------------------------------------------
+   5. 기능성 코드 및 애니메이션 동작 정의
+   ----------------------------------------------------------------------------- */
+
+/* [기능] 투명 클릭 버튼
+   (오븐 전체를 덮고 있어서 어디를 클릭해도 파일 창이 뜨게 함) */
 .hidden-file-input {
   position: absolute;
   top: 0;
@@ -147,29 +174,24 @@
   width: 100%;
   height: 100%;
   opacity: 0;
-  z-index: 10; /* 최상단 위치 */
+  z-index: 10;
   cursor: pointer;
 }
 
-/* [Keyframes] 연기가 피어오르는 애니메이션 */
+/* [애니메이션 정의] 연기가 피어오르는 동작 */
 @keyframes smokeRise {
   0% {
+    /* 시작: 작고 투명함 */
     transform: translateY(0) scale(0.5) rotate(0deg);
     opacity: 0;
   }
   20% {
+    /* 중간: 살짝 보임 */
     opacity: 0.8;
   }
   100% {
-    /* 위로 올라가면서 180도 회전 + 커짐 */
+    /* 끝: 위로 올라가면서 커지고 회전하며 사라짐 */
     transform: translateY(-150px) scale(3) rotate(180deg);
     opacity: 0;
   }
-}
-
-/* [Keyframes] 아이콘 둥둥 뜨는 효과 (필요 시 사용) */
-@keyframes floatIcon {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-5px); }
-  100% { transform: translateY(0px); }
 }

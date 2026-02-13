@@ -4,11 +4,14 @@ import {
   Input, Stack, ToggleButton, ToggleButtonGroup, InputBase, CircularProgress,
   IconButton
 } from "@mui/material";
+// 아이콘 불러오기 (새로고침, 도움말 아이콘 등)
 import RefreshIcon from '@mui/icons-material/Refresh';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+// 3D 뷰어와 가이드 컴포넌트 불러오기
 import Viewer3D from "../components/Viewer3D";
 import ParameterGuide from "../components/ParameterGuide";
 
+// [데이터 타입 정의]
 export interface EditorSettings {
   type: string;
   size: number | string;
@@ -25,16 +28,21 @@ export interface EditorSettings {
   wallOffset: number | string;
   wallExtrude: number | string;
 }
+
 // =============================================================================
-// [1] 재사용 가능한 입력 컴포넌트
+// [1] 입력창 컴포넌트 (반복되는 UI를 미리 만들어두는 곳)
 // =============================================================================
+
+// 숫자 입력창 2개가 나란히 있는 모양 (예: 두께 / 높이)
 const DualInputControl = ({
   label, leftLabel, leftVal, setLeft, rightLabel, rightVal, setRight,
   onKeyDown, onLeftFocus, onRightFocus, onHelpClick
 }: any) => (
   <Box sx={{ mb: 2 }}>
     <Stack direction="row" alignItems="center" spacing={0.5} sx={{ mb: 1 }}>
+      {/* 항목 이름 (예: 칼날, 지지대 등) */}
       <Typography fontWeight={600} fontSize="1.0rem">{label}</Typography>
+      {/* 물음표 아이콘 (누르면 도움말 뜸) */}
       {onHelpClick && (
         <IconButton size="small" onClick={onHelpClick} sx={{ color: '#bdbdbd', p: 0.5, "&:hover": { color: "#424242" } }}>
           <HelpOutlineIcon fontSize="small" />
@@ -43,10 +51,12 @@ const DualInputControl = ({
     </Stack>
 
     <Stack direction="row" spacing={1.5}>
+      {/* 왼쪽 입력창 - Thickness */}
       <Box sx={{ bgcolor: "#f5f5f5", borderRadius: 2, p: 1.5, flex: 1 }}>
         <Typography variant="caption" color="text.secondary" display="block" sx={{ mb: 0.5 }}>{leftLabel}</Typography>
         <InputBase value={leftVal} onChange={(e) => setLeft(e.target.value)} onKeyDown={onKeyDown} onFocus={onLeftFocus} type="number" fullWidth sx={{ fontSize: "1.2rem", fontWeight: "bold", color: "#333" }} />
       </Box>
+      {/* 오른쪽 입력창 - Depth */}
       <Box sx={{ bgcolor: "#f5f5f5", borderRadius: 2, p: 1.5, flex: 1 }}>
         <Typography variant="caption" color="text.secondary" display="block" sx={{ mb: 0.5 }}>{rightLabel}</Typography>
         <InputBase value={rightVal} onChange={(e) => setRight(e.target.value)} onKeyDown={onKeyDown} onFocus={onRightFocus} type="number" fullWidth sx={{ fontSize: "1.2rem", fontWeight: "bold", color: "#333" }} />
@@ -55,6 +65,7 @@ const DualInputControl = ({
   </Box>
 );
 
+// 숫자 입력창 1개만 있는 모양 (예: 간격)
 const SingleInputControl = ({
   label, subLabel, value, setValue, onKeyDown, onFocus, onHelpClick
 }: any) => (
@@ -98,30 +109,35 @@ export default function EditorPage({
 }: EditorPageProps) {
 
   // ---------------------------------------------------------------------------
-  // 2-1. 상태(State) 관리
+  // [2-1] 상태 관리 - 기본값 설정하는 곳
   // ---------------------------------------------------------------------------
+  // 여기 있는 숫자들을 바꾸면, 화면을 처음 켰을 때 기본으로 입력되어 있는 값이 바뀝니다.
 
   const [stlUrl, setStlUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [loadingText, setLoadingText] = useState("업데이트 중...");
 
-  const [type, setType] = useState<string>(initialSettings?.type ?? "both");
-  const [size, setSize] = useState<number | string>(initialSettings?.size ?? 90);
-  const [minThickness, setMinThickness] = useState<number | string>(initialSettings?.minThickness ?? 0.6);
+  // 기본 설정값들
+  const [type, setType] = useState<string>(initialSettings?.type ?? "both"); // both, cutter, cutter+stamp 중 하나
+  const [size, setSize] = useState<number | string>(initialSettings?.size ?? 90); // 전체 크기
+  const [minThickness, setMinThickness] = useState<number | string>(initialSettings?.minThickness ?? 0.6); // 최소 선 두께
 
-  const [bladeThick, setBladeThick] = useState<number | string>(initialSettings?.bladeThick ?? 0.7);
-  const [bladeDepth, setBladeDepth] = useState<number | string>(initialSettings?.bladeDepth ?? 20.0);
-  const [supportThick, setSupportThick] = useState<number | string>(initialSettings?.supportThick ?? 1.3);
-  const [supportDepth, setSupportDepth] = useState<number | string>(initialSettings?.supportDepth ?? 10.0);
-  const [baseThick, setBaseThick] = useState<number | string>(initialSettings?.baseThick ?? 2.0);
-  const [baseDepth, setBaseDepth] = useState<number | string>(initialSettings?.baseDepth ?? 2.0);
+  // 커터 관련 설정값들
+  const [bladeThick, setBladeThick] = useState<number | string>(initialSettings?.bladeThick ?? 0.7);        // 간격과 칼날 사이의 거리
+  const [bladeDepth, setBladeDepth] = useState<number | string>(initialSettings?.bladeDepth ?? 20.0);       // 칼날 Extrude
+  const [supportThick, setSupportThick] = useState<number | string>(initialSettings?.supportThick ?? 1.3);  // 칼날과 지지대 사이의 거리
+  const [supportDepth, setSupportDepth] = useState<number | string>(initialSettings?.supportDepth ?? 10.0); // 지지대 Extrude
+  const [baseThick, setBaseThick] = useState<number | string>(initialSettings?.baseThick ?? 2.0);           // 지지대와 커터의 바닥 사이의 거리
+  const [baseDepth, setBaseDepth] = useState<number | string>(initialSettings?.baseDepth ?? 2.0);           // 바닥의 Extrude
 
+  // 간격 설정
   const [gap, setGap] = useState<number | string>(initialSettings?.gap ?? 1.0);
 
-  const [stampProtrusion, setStampProtrusion] = useState<number | string>(initialSettings?.stampProtrusion ?? 5.0);
-  const [stampDepression, setStampDepression] = useState<number | string>(initialSettings?.stampDepression ?? 2.0);
-  const [wallOffset, setWallOffset] = useState<number | string>(initialSettings?.wallOffset ?? 2.0);
-  const [wallExtrude, setWallExtrude] = useState<number | string>(initialSettings?.wallExtrude ?? 2.0);
+  // 스탬프 관련 설정
+  const [stampProtrusion, setStampProtrusion] = useState<number | string>(initialSettings?.stampProtrusion ?? 5.0); // 돌출부 높이
+  const [stampDepression, setStampDepression] = useState<number | string>(initialSettings?.stampDepression ?? 2.0); // 함몰부 높이
+  const [wallOffset, setWallOffset] = useState<number | string>(initialSettings?.wallOffset ?? 2.0);                // 내벽 Offset
+  const [wallExtrude, setWallExtrude] = useState<number | string>(initialSettings?.wallExtrude ?? 2.0);             // 내벽 Extrude
 
   const prevFileRef = useRef<File | null>(null);
   const [helpOption, setHelpOption] = useState<string | null>(null);
@@ -129,9 +145,10 @@ export default function EditorPage({
 
 
   // ---------------------------------------------------------------------------
-  // 2-2. 이벤트 핸들러
+  // [2-2] 이벤트 핸들러 (버튼 클릭 등 동작 처리)
   // ---------------------------------------------------------------------------
 
+  // 도움말 설명 박스 열기/닫기
   const handleHelpClick = (option: string) => (event: React.MouseEvent<HTMLElement>) => {
     if (helpOption === option && anchorEl) {
       setHelpOption(null);
@@ -147,6 +164,7 @@ export default function EditorPage({
     setAnchorEl(null);
   };
 
+  // 옵션 수치값 입력하고 엔터키 누르면 다음 칸으로 이동하는 기능
   const handleEnterMove = (e: React.KeyboardEvent<any>) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -162,12 +180,14 @@ export default function EditorPage({
     }
   };
 
+  // 설정값 변경 처리 함수들
   const handleTypeChange = (_: React.MouseEvent<HTMLElement>, newType: string | null) => { if (newType) setType(newType); };
   const handleSliderChange = (_: Event, val: number | number[]) => setMinThickness(val as number);
   const handleInputChange = (e: React.ChangeEvent<any>, setter: React.Dispatch<React.SetStateAction<number | string>>) => setter(e.target.value);
   const setVal = (setter: React.Dispatch<React.SetStateAction<number | string>>) => (val: string) => setter(val);
   const getSafeNumber = (val: number | string, def: number) => { const n = Number(val); return isNaN(n) ? def : n; };
 
+  // 새 파일 업로드
   const handleNewFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
     if (selectedFile && onFileChange) {
@@ -175,30 +195,29 @@ export default function EditorPage({
     }
   };
 
-  // [추가] 서버 통신 없이, 현재 화면에 만들어져 있는 모델(stlUrl)을 바로 다운로드
+  // [다운로드 기능] STL 파일 다운로드
   const handleDownloadClick = () => {
     if (!stlUrl) {
       alert("모델이 생성되지 않았습니다. 잠시만 기다려주세요.");
       return;
     }
 
-    // [수정] 우선순위: 1.수정한이름 -> 2.원본파일이름
+    // 파일 이름 정리 (확장자 중복 방지)
     const originalName = itemName || file?.name || "model";
-    
-    // [핵심] 뒤에 .png, .jpg가 붙어있으면 떼버립니다.
-    const cleanName = originalName.replace(/\.[^/.]+$/, "");
-    
+    const cleanName = originalName.replace(/\.[^/.]+$/, ""); // 뒤에 .png 등을 떼버림
+
+    // 다운로드 링크 생성 및 클릭
     const a = document.createElement("a");
-    a.href = stlUrl; // 이미 만들어진 URL 사용
+    a.href = stlUrl;
     a.download = `${cleanName}.stl`;
     document.body.appendChild(a);
     a.click();
     a.remove();
   };
 
-  // [새로 추가할 함수]
+  // [적용 버튼] 변경한 설정값을 저장하고 모델 다시 만들기
   const handleApplyClick = () => {
-    // 1. 현재 설정값을 부모(App.tsx)에 저장
+    // 1. 현재 설정값 저장
     if (onSettingsChange) {
       const currentSettings: EditorSettings = {
         type, size, minThickness,
@@ -218,14 +237,15 @@ export default function EditorPage({
   };
 
   // ---------------------------------------------------------------------------
-  // 2-3. 핵심 로직
+  // [2-3] 핵심 로직: 서버로 데이터 보내서 3D 모델 만들기
   // ---------------------------------------------------------------------------
   const generateModel = useCallback(async (isDownload: boolean = false) => {
     if (!file) return;
 
-    setIsLoading(true);
+    setIsLoading(true); // 로딩 시작
 
     try {
+      // 옵션 정리 (서버가 이해할 수 있는 형태로 변환)
       let outputOption = 1;
       if (type === 'cutter') outputOption = 2;
       if (type === 'stamp') outputOption = 3;
@@ -259,6 +279,7 @@ export default function EditorPage({
       formData.append("file", file);
       formData.append("options_str", JSON.stringify(optionObj));
 
+      // 백엔드 주소가 바뀌면 여기를 수정하세요!
       const response = await fetch("https://cookie-cutter-server.onrender.com/generate", {
         method: "POST",
         body: formData,
@@ -273,12 +294,11 @@ export default function EditorPage({
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
 
-      setStlUrl(url);
-      
+      setStlUrl(url); // 3D 뷰어에 보여줄 URL 저장
+
       const originalName = itemName || file.name;
       const cleanName = originalName.replace(/\.[^/.]+$/, "");
-      
-      const fileName = `${cleanName}.stl`; // 보관함에 저장될 파일명
+      const fileName = `${cleanName}.stl`;
 
       const stlFile = new File([blob], fileName, { type: "model/stl" });
 
@@ -299,10 +319,11 @@ export default function EditorPage({
       console.error("Error generating STL:", error);
       if (isDownload) alert("서버 통신 중 오류가 발생했습니다.");
     } finally {
-      setIsLoading(false);
+      setIsLoading(false); // 로딩 끝
     }
   }, [file, type, size, minThickness, bladeThick, bladeDepth, supportThick, supportDepth, baseThick, baseDepth, gap, stampProtrusion, stampDepression, wallOffset, wallExtrude]);
 
+  // 파일이 바뀌면 자동으로 모델 생성 시작
   useEffect(() => {
     if (file && prevFileRef.current !== file) {
       prevFileRef.current = file;
@@ -312,54 +333,87 @@ export default function EditorPage({
   }, [file]);
 
   // ---------------------------------------------------------------------------
-  // 2-5. 화면 렌더링 (UI Structure)
+  // [3] 화면 렌더링
   // ---------------------------------------------------------------------------
   return (
     <Box sx={{ display: "flex", height: "calc(100vh - 72px)", bgcolor: "#f5f5f5" }}>
 
-      {/* [왼쪽 영역] 3D 뷰어 & 로딩 오버레이 */}
+      {/* =======================================================================
+          [왼쪽 영역] 3D 뷰어 & 로딩 화면
+          ======================================================================= */}
       <Box sx={{ flex: 1, position: "relative", bgcolor: "#e0e0e0" }}>
 
+        {/* 3D 뷰어 컴포넌트 */}
         <Viewer3D
           size={getSafeNumber(size, 90)}
           height={getSafeNumber(bladeDepth, 12)}
           stlUrl={stlUrl}
         />
 
+        {/* 도움말 가이드 팝업 */}
         <ParameterGuide
           activeOption={helpOption}
           anchorEl={anchorEl}
           onClose={handleCloseHelp}
         />
 
+        {/* 로딩 중일 때 뜨는 화면 */}
         {isLoading && (
           <Box sx={{
             position: "absolute", top: 0, left: 0, right: 0, bottom: 0,
             display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+            // 배경색 (흰색 + 투명도)
+            // rgba(255, 255, 255, 0.7) -> 255,255,255는 흰색이고, 0.7은 투명도입니다.
+            // 0.7을 0.9로 바꾸면 더 불투명해지고, 0.2로 바꾸면 아주 투명해집니다.
             bgcolor: "rgba(255,255,255,0.7)",
+            // 배경 흐림 효과
+            // 5px를 10px로 바꾸면 배경이 더 뿌옇게 안개 낀 것처럼 변합니다.
+            // 흐림 효과를 없애고 싶으면 이 줄을 지우거나 0px로 하세요.
             backdropFilter: "blur(5px)",
             zIndex: 200
           }}>
-            <CircularProgress size={60} sx={{ color: "#FF6F00", mb: 2 }} />
+            {/* 뱅글뱅글 도는 로딩 아이콘 */}
+            <CircularProgress
+              size={60} // 아이콘 크기
+              sx={{
+                color: "#FF6F00", // 로딩 아이콘 색상
+                mb: 2               // 글자와의 간격
+              }}
+            />
+            {/* "모델 생성 중..." 텍스트 */}
             <Typography variant="h6" fontWeight="bold" color="text.secondary" sx={{ whiteSpace: 'pre-line', textAlign: 'center' }}>
               {loadingText}
             </Typography>
           </Box>
         )}
 
+        {/* 왼쪽 위 파일 이름 표시 라벨 */}
         {file && (
-          <Paper sx={{ position: "absolute", top: 16, left: 16, p: 1, px: 2, bgcolor: "rgba(255,255,255,0.8)" }}>
+          <Paper
+            sx={{
+              position: "absolute",
+              top: 16,  // 위쪽에서 얼마나 띄울지
+              left: 16, // 왼쪽에서 얼마나 띄울지
+              p: 1,     // 상하 여백
+              px: 2,    // 좌우 여백
+              bgcolor: "rgba(255,255,255,0.8)" // 라벨 배경색, 0.8은 투명도
+            }}
+          >
             현재 편집 중: {itemName || file.name}
           </Paper>
         )}
       </Box>
 
-      {/* [오른쪽 영역] 컨트롤 패널 */}
+      {/* =======================================================================
+          [오른쪽 영역] 컨트롤 패널 (입력창 모음)
+          ======================================================================= */}
       <Paper elevation={4} sx={{ width: 360, bgcolor: "white", zIndex: 10, display: "flex", flexDirection: "column", p: 3, overflowY: "auto" }}>
 
         {/* 섹션 1: 기본 설정 */}
         <Box sx={{ mb: 4 }}>
           <Typography variant="h6" fontWeight="bold" fontSize="1.4rem" sx={{ mb: 2 }}>기본 설정</Typography>
+
+          {/* [타입 선택 버튼] */}
           <ToggleButtonGroup value={type} exclusive onChange={handleTypeChange} fullWidth size="small" sx={{ mb: 3 }}>
             <ToggleButton value="both">커터&스탬프</ToggleButton>
             <ToggleButton value="cutter">커터</ToggleButton>
@@ -372,6 +426,7 @@ export default function EditorPage({
               <Input value={size} fullWidth type="number" onChange={(e) => handleInputChange(e, setSize)} onKeyDown={handleEnterMove} />
             </Box>
 
+            {/* 커터 모드가 아닐 때만 최소 두께 설정 표시 */}
             {type !== 'cutter' && (
               <Box>
                 <Stack direction="row" justifyContent="space-between">
@@ -392,30 +447,88 @@ export default function EditorPage({
 
         <Divider sx={{ mb: 3 }} />
 
-        {/* 섹션 2: 스탬프 설정 */}
+        {/* 섹션 2: 스탬프 설정 (스탬프 모드일 때만 표시) */}
         {(type === 'both' || type === 'stamp') && (
           <Box sx={{ mb: 3 }}>
-            <Typography variant="h5" fontWeight="bold" fontSize="1.4rem" sx={{ mb: 2, color: "#333" }}>스탬프</Typography>
+            {/* 큰 제목: "스탬프" */}
+            <Typography 
+              variant="h5" 
+              fontWeight="bold" // [수정 가능] 글자 굵기 (bold: 굵게, normal: 보통)
+              fontSize="1.4rem" // [수정 가능] 글자 크기 (숫자가 클수록 커짐)
+              sx={{ 
+                mb: 2,          // [수정 가능] 아래 여백
+                color: "#333" // [수정 가능] 글자 색상
+              }}
+            >
+              스탬프
+            </Typography>
 
             <Box sx={{ mb: 3 }}>
-              <Typography gutterBottom fontWeight={600} fontSize="1.0rem" sx={{ mb: 1 }}>높이 설정</Typography>
+              {/* 소제목: "높이 설정" */}
+              <Typography 
+                gutterBottom 
+                fontWeight={600} 
+                fontSize="1.0rem" 
+                sx={{ mb: 1 }} // 제목과 입력창 사이의 간격
+              >
+                높이 설정
+              </Typography>
 
-              <Stack spacing={1.5}>
+              <Stack spacing={1.5}> {/* 입력창들 사이의 간격 (1.5배) */}
 
-                {/* 돌출부 */}
-                <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ bgcolor: "#f5f5f5", p: 1, px: 1.5, borderRadius: 1 }}>
+                {/* 돌출부 입력창 */}
+                <Stack 
+                  direction="row" 
+                  alignItems="center" 
+                  justifyContent="space-between" 
+                  sx={{ 
+                    bgcolor: "#f5f5f5", // 박스 배경색
+                    p: 1,                 // 상하좌우 안쪽 여백
+                    px: 1.5,              // 좌우 여백을 좀 더 넓게
+                    borderRadius: 1       // 모서리 둥글기 (숫자가 클수록 둥글어짐) 
+                  }}
+                >
+                  {/* 왼쪽: 라벨 + 물음표 아이콘 */}
                   <Stack direction="row" alignItems="center" spacing={0.5}>
-                    <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.85rem" }}>돌출부 높이 (mm)</Typography>
-                    <IconButton size="small" onClick={handleHelpClick('stampProtrusion')} sx={{ color: '#bdbdbd', p: 0.5, "&:hover": { color: "#424242" } }}>
+                    <Typography 
+                      variant="caption" 
+                      color="text.secondary"       // 글자 색상
+                      sx={{ fontSize: "0.85rem" }} // 글자 크기
+                    >
+                      돌출부 높이 (mm)
+                    </Typography>
+
+                    {/* 물음표 아이콘 버튼 */}
+                    <IconButton 
+                      size="small" 
+                      onClick={handleHelpClick('stampProtrusion')} 
+                      sx={{ 
+                        color: '#bdbdbd', // 아이콘 기본 색상
+                        p: 0.5, 
+                        "&:hover": { color: "#424242" } // 마우스 올렸을 때 변하는 색상
+                      }}
+                    >
                       <HelpOutlineIcon fontSize="small" />
                     </IconButton>
                   </Stack>
+
+                  {/* 오른쪽: 숫자 입력칸 */}
                   <InputBase
-                    value={stampProtrusion} onChange={(e) => setStampProtrusion(e.target.value)} type="number" sx={{ width: 60, fontWeight: "bold", textAlign: "right", fontSize: "1.2rem", color: "#333" }} onKeyDown={handleEnterMove}
+                    value={stampProtrusion} 
+                    onChange={(e) => setStampProtrusion(e.target.value)} 
+                    type="number" 
+                    sx={{ 
+                      width: 60,           // 입력칸 너비
+                      fontWeight: "bold",  // 숫자 굵기
+                      textAlign: "right",  // 오른쪽 정렬
+                      fontSize: "1.2rem",  // 숫자 크기
+                      color: "#333"      // 숫자 색상
+                    }} 
+                    onKeyDown={handleEnterMove}
                   />
                 </Stack>
 
-                {/* 함몰부 */}
+                {/* 함몰부 입력창 */}
                 <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ bgcolor: "#f5f5f5", p: 1, px: 1.5, borderRadius: 1 }}>
                   <Stack direction="row" alignItems="center" spacing={0.5}>
                     <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.85rem" }}>함몰부 높이 (mm)</Typography>
@@ -431,6 +544,7 @@ export default function EditorPage({
               </Stack>
             </Box>
 
+            {/* 내벽 설정 (DualInputControl은 위쪽 [1]번 영역에서 디자인 수정 가능) */}
             <DualInputControl label="내벽"
               leftLabel="Offset (mm)" leftVal={wallOffset} setLeft={setVal(setWallOffset)}
               rightLabel="Extrude (mm)" rightVal={wallExtrude} setRight={setVal(setWallExtrude)}
@@ -440,7 +554,7 @@ export default function EditorPage({
           </Box>
         )}
 
-        {/* 섹션 3: 간격 설정 */}
+        {/* 섹션 3: 간격 설정 (Both 모드일 때만 표시) */}
         {(type === 'both') && (
           <>
             <Divider sx={{ mb: 3 }} />
@@ -457,7 +571,7 @@ export default function EditorPage({
           </>
         )}
 
-        {/* 섹션 4: 커터 설정 */}
+        {/* 섹션 4: 커터 설정 (커터 모드일 때만 표시) */}
         {(type === 'both' || type === 'cutter') && (
           <Box sx={{ mb: 4 }}>
             <Typography variant="h5" fontWeight="bold" fontSize="1.4rem" sx={{ mb: 2, color: "#333" }}>커터</Typography>
@@ -482,8 +596,12 @@ export default function EditorPage({
           </Box>
         )}
 
-        {/* 하단 버튼 영역 */}
+        {/* =====================================================================
+            [하단 버튼 영역]
+            ===================================================================== */}
         <Box sx={{ mt: "auto", pt: 2 }}>
+
+          {/* [버튼 1] 설정 적용 및 미리보기 */}
           <Button
             fullWidth
             variant="contained"
@@ -491,7 +609,7 @@ export default function EditorPage({
             size="large"
             startIcon={<RefreshIcon />}
             onClick={handleApplyClick}
-            disabled={isLoading}
+            disabled={isLoading} // 로딩 중엔 클릭 불가
             sx={{
               bgcolor: "#FF6F00", py: 1.5, fontWeight: "bold", mb: 2,
               "&:hover": { bgcolor: "#E65100" },
@@ -500,14 +618,14 @@ export default function EditorPage({
           >
             설정 적용 및 미리보기
           </Button>
-
+          
+          {/* [버튼 2] STL 파일 다운로드 */}
           <Button
             fullWidth
             variant="contained"
             size="large"
             onClick={handleDownloadClick}
-            
-            disabled={isLoading} // 로딩 중(초기 생성 중)일 때는 버튼 못 누르게
+            disabled={isLoading}
             sx={{
               bgcolor: "#5D4037", py: 1.5, fontWeight: "bold", mb: 2,
               "&:hover": { bgcolor: "#4E342E" },
@@ -516,7 +634,8 @@ export default function EditorPage({
           >
             STL 파일 다운로드
           </Button>
-
+          
+          {/* [버튼 3] 새로운 파일 업로드 */}
           <Button
             component="label"
             fullWidth
